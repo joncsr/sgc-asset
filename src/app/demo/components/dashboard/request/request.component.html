@@ -1,0 +1,264 @@
+
+
+    <p-tabMenu [model]="items">
+    </p-tabMenu>
+<br>
+<div class="card">
+
+  <h5>Requests Table </h5>
+  <p-table
+      #dt1
+      [value]="customers"
+      dataKey="id"
+      [rows]="5"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [loading]="loading"
+      [paginator]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [globalFilterFields]="[
+          'name',
+          'country.name',
+          'representative.name',
+          'status'
+      ]"
+  >
+      <ng-template pTemplate="caption">
+          <div class="flex">
+              <span class="p-input-icon-left ml-auto">
+                  <i class="pi pi-search"></i>
+                  <input
+                      pInputText
+                      type="text"
+                      (input)="
+                          dt1.filterGlobal($event.target.value, 'contains')
+                      "
+                      placeholder="Search keyword"
+                  />
+              </span>
+          </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+          <tr>
+              <th style="min-width: 15rem">
+                  <div class="flex align-items-center">
+                      Name
+                      <p-columnFilter
+                          type="text"
+                          field="name"
+                          display="menu"
+                      ></p-columnFilter>
+                  </div>
+              </th>
+              <th style="min-width: 15rem">
+                  <div class="flex align-items-center">
+                      Country
+                      <p-columnFilter
+                          type="text"
+                          field="country.name"
+                          display="menu"
+                      ></p-columnFilter>
+                  </div>
+              </th>
+              <th style="min-width: 15rem">
+                  <div class="flex align-items-center">
+                      Agent
+                      <p-columnFilter
+                          field="representative"
+                          matchMode="in"
+                          display="menu"
+                          [showMatchModes]="false"
+                          [showOperator]="false"
+                          [showAddButton]="false"
+                      >
+                          <ng-template pTemplate="header">
+                              <div class="px-3 pt-3 pb-0">
+                                  <span class="font-bold">Agent Picker</span>
+                              </div>
+                          </ng-template>
+                          <ng-template
+                              pTemplate="filter"
+                              let-value
+                              let-filter="filterCallback"
+                          >
+                              <p-multiSelect
+                                  [ngModel]="value"
+                                  [options]="representatives"
+                                  placeholder="Any"
+                                  (onChange)="filter($event.value)"
+                                  optionLabel="name"
+                              >
+                                  <ng-template let-option pTemplate="item">
+                                      <div
+                                          class="inline-block vertical-align-middle"
+                                      >
+                                          <img
+                                              [alt]="option.label"
+                                              src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{
+                                                  option.image
+                                              }}"
+                                              width="24"
+                                              class="vertical-align-middle"
+                                          />
+                                          <span class="ml-1 mt-1">{{
+                                              option.name
+                                          }}</span>
+                                      </div>
+                                  </ng-template>
+                              </p-multiSelect>
+                          </ng-template>
+                      </p-columnFilter>
+                  </div>
+              </th>
+              <th style="min-width: 10rem">
+                  <div class="flex align-items-center">
+                      Date
+                      <p-columnFilter
+                          type="date"
+                          field="date"
+                          display="menu"
+                      ></p-columnFilter>
+                  </div>
+              </th>
+              <th style="min-width: 10rem">
+                  <div class="flex align-items-center">
+                      Balance
+                      <p-columnFilter
+                          type="numeric"
+                          field="balance"
+                          display="menu"
+                          currency="USD"
+                      ></p-columnFilter>
+                  </div>
+              </th>
+
+              <th style="min-width: 10rem">
+                  <div class="flex align-items-center">
+                      Activity
+                      <p-columnFilter
+                          field="activity"
+                          matchMode="between"
+                          display="menu"
+                          [showMatchModes]="false"
+                          [showOperator]="false"
+                          [showAddButton]="false"
+                      >
+                          <ng-template
+                              pTemplate="filter"
+                              let-filter="filterCallback"
+                          >
+                              <p-slider
+                                  [ngModel]="activityValues"
+                                  [range]="true"
+                                  (onSlideEnd)="filter($event.values)"
+                                  styleClass="m-3"
+                              ></p-slider>
+                              <div class="flex align-items-center px-2">
+                                  <span>{{ activityValues[0] }}</span>
+                                  <span>{{ activityValues[1] }}</span>
+                              </div>
+                          </ng-template>
+                      </p-columnFilter>
+                  </div>
+              </th>
+              <th style="width: 3rem">
+                  <div class="flex align-items-center">
+                      Verified
+                      <p-columnFilter
+                          type="boolean"
+                          field="verified"
+                          display="menu"
+                      ></p-columnFilter>
+                  </div>
+              </th>
+          </tr>
+      </ng-template>
+
+
+      <ng-template pTemplate="body" let-customer>
+          <tr>
+              <td>
+                  {{ customer.name }}
+              </td>
+              <td>
+                  <img
+                      src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                      [class]="'flag flag-' + customer.country.code"
+                      style="width: 20px"
+                  />
+                  <span class="ml-1 vertical-align-middle">{{
+                      customer.country.name
+                  }}</span>
+              </td>
+              <td>
+                  <img
+                      [alt]="customer.representative.name"
+                      src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{
+                          customer.representative.image
+                      }}"
+                      width="32"
+                      style="vertical-align: middle"
+                  />
+                  <span class="ml-1 vertical-align-middle">{{
+                      customer.representative.name
+                  }}</span>
+              </td>
+              <td>
+                  {{ customer.date | date : "MM/dd/yyyy" }}
+              </td>
+              <td>
+                  {{ customer.balance | currency : "USD" : "symbol" }}
+              </td>
+
+              <td>
+                  <p-progressBar
+                      [value]="customer.activity"
+                      [showValue]="false"
+                  ></p-progressBar>
+              </td>
+              <td class="text-center">
+                  <i
+                      class="pi"
+                      [ngClass]="{
+                          'text-green-500 pi-check-circle': customer.verified,
+                          'text-red-500 pi-times-circle': !customer.verified
+                      }"
+                  ></i>
+              </td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+          <tr>
+              <td colspan="7">No customers found.</td>
+          </tr>
+      </ng-template>
+  </p-table>
+</div>
+
+<p-dialog
+  header="Dialog"
+  [(visible)]="display"
+  [modal]="true"
+  showEffect="fade"
+  [style]="{ width: '30vw' }"
+  [breakpoints]="{ '960px': '75vw' }"
+>
+  <p class="line-height-3 m-0">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+      occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+      mollit anim id est laborum.
+  </p>
+  <ng-template pTemplate="footer">
+      <button
+          pButton
+          icon="pi pi-check"
+          (click)="display = false"
+          label="Ok"
+          class="p-button-outlined"
+      ></button>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,40 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card card-w-title flex flex-wrap">
+            <div class="col-12 md:col-12 h-full">
+                <h5>Asset Management</h5>
+                <p-tabMenu styleClass="mb-5" [model]="routeItems"></p-tabMenu>
+
+                <!-- <p-steps
+                    [model]="routeItems"
+                    styleClass="mt-5"
+                    [readonly]="false"
+                ></p-steps> -->
+            </div>
+            <div class="col-12 md:col-12 mt-5 md:mt-0">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 xl:col-6">
+        <div class="card">
+            <h5>Upload CSV</h5>
+            <p-fileUpload
+                name="demo[]"
+                url="./upload.php"
+                (onUpload)="onUpload($event)"
+                [multiple]="true"
+                accept="image/*"
+                [maxFileSize]="1000000"
+            >
+                <ng-template pTemplate="content">
+                    <ul *ngIf="uploadedFiles.length">
+                        <li *ngFor="let file of uploadedFiles">
+                            {{ file.name }} - {{ file.size }} bytes
+                        </li>
+                    </ul>
+                </ng-template>
+            </p-fileUpload>
+        </div>
+    </div>
+</div>
