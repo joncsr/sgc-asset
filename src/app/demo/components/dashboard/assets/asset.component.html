@@ -23,7 +23,7 @@
             <div class="flex">
                 <div>
                     <button
-                        (click)="add_asset = true"
+                        [routerLink]="['/add_asset']"
                         pButton
                         icon="pi pi-plus"
                         label="Add"
@@ -146,9 +146,7 @@
                 </th>
 
                 <th style="min-width: 10rem">
-                    <div class="flex align-items-center">
-                        Date Aquired
-                    </div>
+                    <div class="flex align-items-center">Date Aquired</div>
                 </th>
                 <th style="width: 5rem">
                     <div class="flex align-items-center">
@@ -164,16 +162,14 @@
         </ng-template>
 
         <ng-template pTemplate="body" let-customer>
-            <tr >
+            <tr>
                 <td>
-
                     <i class="pi pi-apple"></i>
                     <!-- {{ customer.name }} -->
                 </td>
                 <td>
-
                     <span class="ml-1 vertical-align-middle">{{
-                       083432843284032
+                        083432843284032
                     }}</span>
                 </td>
                 <td>
@@ -182,7 +178,7 @@
                     }}</span>
                 </td>
                 <td>
-                    {{ getRandomSerialNumber() }}
+                    9r343hhjfdds
                 </td>
                 <td>
                     {{ customer.balance | currency : "USD" : "symbol" }}
@@ -218,15 +214,12 @@
     [style]="{ width: '30vw' }"
     [breakpoints]="{ '960px': '75vw' }"
 >
-    <p class="line-height-3 m-0">
-
-    </p>
     <ng-template pTemplate="footer">
         <button
             pButton
             icon="pi pi-check"
             (click)="add_asset = false"
-            label="Ok"
+            label="Add"
             class="p-button-outlined"
         ></button>
     </ng-template>
@@ -240,24 +233,23 @@
     [style]="{ width: '30vw' }"
     [breakpoints]="{ '960px': '75vw' }"
 >
-<form action="" >
-    <p class="line-height-3 m-0">
-        <p-fileUpload
-        name="demo[]"
-        accept=".csv"
-        [maxFileSize]="1000000"
-        (onUpload)="onBasicUpload()"
-    ></p-fileUpload>
-     </p>
 
-         <!-- <button
+        <p class="line-height-3 m-0">
+            <p-fileUpload
+                name="demo[]"
+                accept=".csv"
+                [maxFileSize]="1000000"
+                (onUpload)="onBasicUpload()"
+                formControlName="fileInput"
+            ></p-fileUpload>
+        </p>
+
+        <!-- <button
              pButton
              icon="pi pi-upload"
              (click)="upload_asset = false"
              label="Upload"
              class="p-button-outlined mt-5"
          ></button> -->
-
-</form>
 
 </p-dialog>

@@ -45,6 +45,15 @@ import { ScrollTopModule } from 'primeng/scrolltop';
 import { TagModule } from 'primeng/tag';
 import { BadgeModule } from 'primeng/badge';
 import { ComponentStorageComponent } from './component-storage/component-storage..component';
+import { AddAssetComponent } from './assets/add-asset/add-asset.component';
+
+import { InputTextareaModule } from "primeng/inputtextarea";
+import { CalendarModule } from 'primeng/calendar';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { FormControl, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+
+
 
 @NgModule({
     imports: [
@@ -70,7 +79,7 @@ import { ComponentStorageComponent } from './component-storage/component-storage
         ProgressBarModule,
         ToastModule,
         DialogModule,
-        FormsModule,
+
         TooltipModule,
         BadgeModule,
 
@@ -92,6 +101,13 @@ import { ComponentStorageComponent } from './component-storage/component-storage
         ChipModule,
         AvatarGroupModule,
         ScrollTopModule,
+
+        InputTextareaModule,
+        CalendarModule,
+        AutoCompleteModule,
+        ReactiveFormsModule,
+
+
 
         RouterModule.forChild([
             {
@@ -117,6 +133,7 @@ import { ComponentStorageComponent } from './component-storage/component-storage
         AssetComponent,
         RequestComponent,
         ComponentStorageComponent,
+        AddAssetComponent
     ],
 })
 export class DashboardModule {}

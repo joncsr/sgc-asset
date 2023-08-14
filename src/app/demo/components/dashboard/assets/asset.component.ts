@@ -1,8 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CustomerService } from 'src/app/demo/service/customer.service';
+import { AssetService } from 'src/app/services/asset.service';
 
 @Component({
     templateUrl: './asset.component.html',
@@ -27,7 +30,21 @@ export class AssetComponent implements OnInit {
 
     serialNumbers = [];
 
-    constructor(private customerService: CustomerService) {}
+    uploadForm: FormGroup;
+    Data: any;
+    fileContent: string;
+
+
+  constructor(
+    private assetService: AssetService,
+    private _http: HttpClient,
+    private formBuilder: FormBuilder,
+    private customerService: CustomerService
+    ){
+      this.uploadForm = this.formBuilder.group({
+        fileInput: ['', Validators.required]
+      });
+    }
 
     ngOnInit() {
         this.customerService.getCustomersLarge().then((customers) => {
@@ -78,7 +95,19 @@ export class AssetComponent implements OnInit {
 
     onUpload(event: any) {}
 
-    onBasicUpload() {}
+    onBasicUpload(): void {
+        if (this.uploadForm.valid && this.fileContent) {
+            const file = new File([this.fileContent], 'data.csv', { type: 'text/csv' });
+
+            // Make the API call and handle the response
+            this.assetService.uploadCSV(file).subscribe(
+              (response) => {
+                // Handle the successful response here
+                alert("File Uploaded");
+              }
+            );
+          }
+    }
 
     serialNumber() {
         for (let i = 0; i < 10; i++) {
@@ -89,9 +118,26 @@ export class AssetComponent implements OnInit {
             );
         }
     }
-    getRandomSerialNumber() {
-        return this.serialNumbers[
-            Math.floor(Math.random() * this.serialNumbers.length)
-        ];
-    }
+    // getRandomSerialNumber() {
+    //     return this.serialNumbers[
+    //         Math.floor(Math.random() * this.serialNumbers.length)
+    //     ];
+    // }
+
+
+    onFileSelected(event: any) {
+        const file: File = event.target.files[0];
+
+        if (file) {
+          const reader: FileReader = new FileReader();
+          reader.onload = (e) => {
+            this.fileContent = reader.result as string;
+          };
+          reader.readAsText(file);
+        }
+      }
+
+    onSubmit(): void {
+
+      }
 }

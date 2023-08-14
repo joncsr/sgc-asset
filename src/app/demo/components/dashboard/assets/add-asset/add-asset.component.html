@@ -1,0 +1,153 @@
+<div class="grid p-fluid">
+    <div class="col-12 lg:col-12">
+        <div class="card">
+            <h3>Add Asset</h3>
+            <form>
+                <div formGroupName="assetInventoryDTO">
+                    <div class="grid formgrid">
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="barcode">Barcode</label>
+                            <input
+                                type="text"
+                                pInputText
+                                id="barcode"
+                                placeholder="Bar Code"
+                                formControlName="barcode"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                            <label htmlFor="unit">Unit Name</label>
+                            <input
+                                type="text"
+                                id="unit"
+                                pInputText
+                                placeholder="Unit Name"
+                                formControlName="unit"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                            <label htmlFor="serialNo">Serial Number</label>
+                            <input
+                                type="text"
+                                id="serialNo"
+                                pInputText
+                                placeholder="Serial Number"
+                                formControlName="serialNo"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                            <label htmlFor="specification">Specification</label>
+                            <input
+                                type="text"
+                                id="specification"
+                                pInputText
+                                placeholder="Specification"
+                                formControlName="specs"
+                            />
+                        </div>
+                    </div>
+                    <div class="grid formgrid mt-5">
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="data_po">PO Date</label>
+                            <p-calendar
+                                [showIcon]="true"
+                                formControlName="datePO"
+                            ></p-calendar>
+                        </div>
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="date_acquied">Date Acquired</label>
+                            <p-calendar
+                                [showIcon]="true"
+                                formControlName="dateAcquired"
+                            ></p-calendar>
+                        </div>
+                        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                            <label htmlFor="vendor">Vendor</label>
+                            <input
+                                type="text"
+                                id="vendor"
+                                pInputText
+                                placeholder="Vendor"
+                                formControlName="vendor"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                            <label htmlFor="warranty">Warranty</label>
+                            <p-calendar
+                            [showIcon]="true"
+                            formControlName="warranty"
+                        ></p-calendar>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid formgrid mt-5">
+                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                        <label htmlFor="company">Company</label>
+                        <input
+                            type="text"
+                            id="company"
+                            pInputText
+                            placeholder="Company"
+                            name="company"
+                        />
+                    </div>
+                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                        <label htmlFor="department">Department</label>
+                        <p-dropdown
+                            formControlName="department"
+                            [options]="cities"
+                            optionLabel="name"
+                        ></p-dropdown>
+                    </div>
+                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                        <label htmlFor="accountability"
+                            >Accountability Number</label
+                        >
+                        <input
+                            type="number"
+                            id="accountability"
+                            pInputText
+                            placeholder="Accountability Number"
+                            formControlName="accountabilityNo"
+                        />
+                    </div>
+                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                        <label htmlFor="user">Current User</label>
+                        <p-autoComplete
+                            formControlName="currentUser"
+                            [dropdown]="true"
+                            [suggestions]="filteredCountries"
+                            (completeMethod)="filterCountry($event)"
+                            field="name"
+                        ></p-autoComplete>
+
+                    </div>
+                </div>
+
+                <div class="grid formgrid mt-5">
+                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                        <label htmlFor="remarks">Remarks</label>
+                        <textarea
+                            rows="5"
+                            id="remarks"
+                            cols="30"
+                            placeholder="Remarks Here"
+                            pInputTextarea
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="grid formgrid mt-5 flex justify-content-end">
+                    <div class="col-12 mb-2 lg:col-1 lg:mb-0">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Add"
+                        ></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
