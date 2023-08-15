@@ -42,13 +42,14 @@ export class AddAssetComponent implements OnInit {
         // this.getDepartments();
         this.getEmployee();
         this.getDepartmentCodes();
+        this.setupCurrentUserListener();
     }
 
     initForm() {
         this.assetForm = this.formBuilder.group({
             assetInventoryDTO: this.formBuilder.group({
                 barcode: [
-                    { value: this.generateBarcode(), disabled: true },
+                    this.generateBarcode(),
                     [Validators.required, Validators.minLength(6)],
                 ], // Set initial value for barcode and disable it
                 unit: ['', Validators.required],
@@ -123,12 +124,12 @@ export class AddAssetComponent implements OnInit {
         );
     }
 
-    users: Employee[];
+    users: string[] = [];
     filteredUsers: any[] | undefined;
 
     getEmployee() {
-        this.assetService.getUsers().then(
-            (users: Employee[]) => {
+        this.assetService.getUsers().subscribe(
+            (users: string[]) => {
                 this.users = users;
             },
             (error) => {
@@ -143,8 +144,7 @@ export class AddAssetComponent implements OnInit {
 
         if (this.users) {
             filtered = this.users.filter((user) => {
-                const fullName = `${user.firstName}`;
-                return fullName.toLowerCase().includes(query.toLowerCase());
+                return user.toLowerCase().includes(query.toLowerCase());
             });
         }
 
@@ -181,4 +181,22 @@ export class AddAssetComponent implements OnInit {
             }
         );
     }
+
+    setupCurrentUserListener() {
+        this.assetForm.get('currentUser').valueChanges.subscribe((selectedUser) => {
+          // Assuming your currentUser object has a property named empId
+          const empId = selectedUser?.id || null ;
+          this.assetForm.get('empId').setValue(empId); // Update the empId field value
+        });
+      }
+
+      SelectedValue: any;
+
+
+      ChangeUser(e){
+
+        console.log(e.target.value)
+        this.SelectedValue= e.target.value
+
+      }
 }

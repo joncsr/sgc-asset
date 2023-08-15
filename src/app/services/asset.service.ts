@@ -64,22 +64,13 @@ export class AssetService {
             .pipe(map((response: any) => response.$values));
     }
 
-    getUsers() {
-        return this._http
-            .get<any[]>('/api/Employee') // Adjust the URL path and data type accordingly
-            .toPromise()
-            .then((res) => {
-                return res.map(user => {
-                    return {
-                        firstName: user.firstName
-                    };
-                });
-            })
-            .catch((error) => {
-                console.error('Error fetching employees:', error);
-                return []; // Return an empty array in case of an error
-            });
+    getUsers(): Observable<string[]> {
+        return this._http.get<any[]>('/api/Employee').pipe(
+            map((users: any[]) => users.map(user => user.firstName))
+        );
     }
+
+
     getEmployeeFirstName() {
         return this._http.get<Employee[]>('/api/Employee').pipe(
             map((employees: Employee[]) => {

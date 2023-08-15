@@ -114,28 +114,18 @@
                             formControlName="accountabilityNo"
                         />
                     </div>
-                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
-                        <label htmlFor="accountability"
-                            >EMP ID </label
-                        >
-                        <input
-                            type="number"
-                            id="empId"
-                            pInputText
-                            formControlName="empId"
-                        />
-                    </div>
 
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                         <label htmlFor="user">Current User</label>
                         <p-autoComplete
+
                             formControlName="currentUser"
                             [dropdown]="true"
                             [suggestions]="filteredUsers"
                             (completeMethod)="filterUsers($event)"
-                            field="firstName"
+                            (change) = "ChangeUser($event)"
                         ></p-autoComplete>
-
+                        {{SelectedValue}}
                     </div>
                 </div>
 
