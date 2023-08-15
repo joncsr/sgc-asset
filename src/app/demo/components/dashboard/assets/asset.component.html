@@ -4,19 +4,16 @@
     <h5>Asset Table</h5>
     <p-table
         #dt1
-        [value]="customers"
+        [value]="assets"
         dataKey="id"
-        [rows]="5"
+        [rows]="10"
         [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[5, 10, 20]"
         [loading]="loading"
         [paginator]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [globalFilterFields]="[
-            'name',
-            'country.name',
-            'representative.name',
-            'status'
+            '',
         ]"
     >
         <ng-template pTemplate="caption">
@@ -63,138 +60,61 @@
                         ></p-columnFilter>
                     </div>
                 </th>
-                <th style="min-width: 10rem">
-                    <div class="flex align-items-center">
-                        Barcode
-                        <p-columnFilter
-                            type="text"
-                            field="country.name"
-                            display="menu"
-                        ></p-columnFilter>
-                    </div>
+                <th style="min-width: 15rem">
+                    <div class="flex align-items-center">Barcode</div>
                 </th>
                 <th style="min-width: 10rem">
-                    <div class="flex align-items-center">
-                        Unit Name
-                        <p-columnFilter
-                            field="representative"
-                            matchMode="in"
-                            display="menu"
-                            [showMatchModes]="false"
-                            [showOperator]="false"
-                            [showAddButton]="false"
-                        >
-                            <ng-template pTemplate="header">
-                                <div class="px-3 pt-3 pb-0">
-                                    <span class="font-bold">Unit </span>
-                                </div>
-                            </ng-template>
-                            <ng-template
-                                pTemplate="filter"
-                                let-value
-                                let-filter="filterCallback"
-                            >
-                                <p-multiSelect
-                                    [ngModel]="value"
-                                    [options]="representatives"
-                                    placeholder="Any"
-                                    (onChange)="filter($event.value)"
-                                    optionLabel="name"
-                                >
-                                    <ng-template let-option pTemplate="item">
-                                        <div
-                                            class="inline-block vertical-align-middle"
-                                        >
-                                            <img
-                                                [alt]="option.label"
-                                                src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{
-                                                    option.image
-                                                }}"
-                                                width="24"
-                                                class="vertical-align-middle"
-                                            />
-                                            <span class="ml-1 mt-1">{{
-                                                option.name
-                                            }}</span>
-                                        </div>
-                                    </ng-template>
-                                </p-multiSelect>
-                            </ng-template>
-                        </p-columnFilter>
-                    </div>
+                    <div class="flex align-items-center">Unit Name</div>
                 </th>
                 <th style="min-width: 10rem">
-                    <div class="flex align-items-center">
-                        Serial Number
-                        <p-columnFilter
-                            type="date"
-                            field="date"
-                            display="menu"
-                        ></p-columnFilter>
-                    </div>
+                    <div class="flex align-items-center">Serial Number</div>
                 </th>
                 <th style="min-width: 10rem">
-                    <div class="flex align-items-center">
-                        Specification
-                        <p-columnFilter
-                            type="numeric"
-                            field="balance"
-                            display="menu"
-                            currency="USD"
-                        ></p-columnFilter>
-                    </div>
+                    <div class="flex align-items-center">Specification</div>
                 </th>
 
                 <th style="min-width: 10rem">
                     <div class="flex align-items-center">Date Aquired</div>
                 </th>
                 <th style="width: 5rem">
-                    <div class="flex align-items-center">
-                        User
-                        <p-columnFilter
-                            type="boolean"
-                            field="verified"
-                            display="menu"
-                        ></p-columnFilter>
-                    </div>
+                    <div class="flex align-items-center">User</div>
                 </th>
             </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-customer>
+        <ng-template pTemplate="body" let-asset>
             <tr>
                 <td>
-                    <i class="pi pi-apple"></i>
-                    <!-- {{ customer.name }} -->
+                   <img src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg" alt="" width="80px" height="80px">
                 </td>
                 <td>
-                    <span class="ml-1 vertical-align-middle">{{
-                        083432843284032
-                    }}</span>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ asset.assetInventoryDTO.barcode }}
+                    </span>
                 </td>
                 <td>
-                    <span class="ml-1 vertical-align-middle">{{
-                        customer.representative.name
-                    }}</span>
+                    <span class="ml-1 vertical-align-middle">
+                        {{ asset.assetInventoryDTO.serialNo }}
+                    </span>
                 </td>
                 <td>
-                    9r343hhjfdds
+                    {{ asset.assetInventoryDTO.specs }}
                 </td>
                 <td>
-                    {{ customer.balance | currency : "USD" : "symbol" }}
+                    {{
+                        asset.assetInventoryDTO.dateAcquired
+                            | date : "MM/dd/yyyy"
+                    }}
                 </td>
 
                 <td>
-                    {{ customer.date | date : "MM/dd/yyyy" }}
+                    {{
+                        asset.assetInventoryDTO.dateAcquired
+                            | date : "MM/dd/yyyy"
+                    }}
                 </td>
-                <td class="text-center">
-                    <i
-                        class="pi"
-                        [ngClass]="{
-                            'text-green-500 pi-check-circle': customer.verified,
-                            'text-red-500 pi-times-circle': !customer.verified
-                        }"
-                    ></i>
+                <td>
+                    {{ asset.currentUser }}
                 </td>
             </tr>
         </ng-template>
@@ -233,18 +153,27 @@
     [style]="{ width: '30vw' }"
     [breakpoints]="{ '960px': '75vw' }"
 >
-
+    <form class="form-inline" [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
         <p class="line-height-3 m-0">
-            <p-fileUpload
-                name="demo[]"
-                accept=".csv"
-                [maxFileSize]="1000000"
-                (onUpload)="onBasicUpload()"
+            <input
+                type="file"
+                pInputFile
                 formControlName="fileInput"
-            ></p-fileUpload>
+                (change)="onFileSelected($event)"
+                accept=".csv"
+            />
         </p>
+        <button
+            type="submit"
+            pButton
+            icon="pi pi-upload"
+            label="Upload"
+            class="mt-5"
+        ></button>
+    </form>
+</p-dialog>
 
-        <!-- <button
+<!-- <button
              pButton
              icon="pi pi-upload"
              (click)="upload_asset = false"
@@ -252,4 +181,10 @@
              class="p-button-outlined mt-5"
          ></button> -->
 
-</p-dialog>
+<!-- <p-fileUpload
+name="demo[]"
+accept=".csv"
+[maxFileSize]="1000000"
+(onUpload)="onBasicUpload()"
+formControlName="fileInput"
+></p-fileUpload> -->

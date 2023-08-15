@@ -6,7 +6,7 @@ import { Table } from 'primeng/table';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CountryService } from 'src/app/demo/service/country.service';
 import { CustomerService } from 'src/app/demo/service/customer.service';
-import { Department } from 'src/app/models/employee.model';
+import { Department, Employee } from 'src/app/models/employee.model';
 import { AssetService } from 'src/app/services/asset.service';
 import { FormControl } from '@angular/forms';
 
@@ -19,18 +19,17 @@ interface AutoCompleteCompleteEvent {
     templateUrl: './add-asset.component.html',
 })
 export class AddAssetComponent implements OnInit {
-
     countries: any[] | undefined;
 
     filteredCountries: any[] | undefined;
 
     selectedCountryAdvanced: any[] = [];
-    departments: Department[] | undefined;
+
     selectedDrop: SelectItem = { value: '' };
     cities: SelectItem[] = [];
 
-    assetForm!: FormGroup;
-    formGroup!: FormGroup;
+    assetForm: FormGroup;
+
 
     constructor(
         private countryService: CountryService,
@@ -39,41 +38,19 @@ export class AddAssetComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.countryService.getCountries().then((countries) => {
-            this.countries = countries;
-        });
-
-        this.cities = [
-            {
-                label: 'New York',
-                value: { id: 1, name: 'New York', code: 'NY' },
-            },
-            { label: 'Rome', value: { id: 2, name: 'Rome', code: 'RM' } },
-            { label: 'London', value: { id: 3, name: 'London', code: 'LDN' } },
-            {
-                label: 'Istanbul',
-                value: { id: 4, name: 'Istanbul', code: 'IST' },
-            },
-            { label: 'Paris', value: { id: 5, name: 'Paris', code: 'PRS' } },
-        ];
-
         this.initForm();
-        this.getDepartments();
+        // this.getDepartments();
+        this.getEmployee();
+        this.getDepartmentCodes();
     }
 
     initForm() {
         this.assetForm = this.formBuilder.group({
-            company: ['', Validators.required],
-            department: ['', Validators.required],
-            accountabilityNo: ['', Validators.required],
-            currentUser: ['', Validators.required],
-            remarks: ['', Validators.required],
-
             assetInventoryDTO: this.formBuilder.group({
                 barcode: [
-                    this.generateBarcode(),
+                    { value: this.generateBarcode(), disabled: true },
                     [Validators.required, Validators.minLength(6)],
-                ], // Set initial value for barcode
+                ], // Set initial value for barcode and disable it
                 unit: ['', Validators.required],
                 serialNo: ['', Validators.required],
                 specs: ['', Validators.required],
@@ -82,6 +59,13 @@ export class AddAssetComponent implements OnInit {
                 datePO: ['', Validators.required],
                 dateAcquired: ['', Validators.required],
             }),
+
+            company: ['', Validators.required],
+            department: [''],
+            accountabilityNo: ['', Validators.required],
+            currentUser: [''],
+            empId: [''],
+            remarks: ['', Validators.required],
         });
     }
 
@@ -112,8 +96,6 @@ export class AddAssetComponent implements OnInit {
         return result;
     }
 
-    onFormSubmit() {}
-
     filterCountry(event: AutoCompleteCompleteEvent) {
         let filtered: any[] = [];
         let query = event.query;
@@ -128,14 +110,75 @@ export class AddAssetComponent implements OnInit {
         this.filteredCountries = filtered;
     }
 
-    getDepartments(): void {
+    departments: Department[];
+
+    getDepartments() {
         this.assetService.getDepartment().subscribe(
-          (departments: any) => {
-            this.departments = departments.$values; // Assign the fetched departments to the 'departments' array
-          },
-          (error) => {
-            console.error("Error fetching departments:", error);
-          }
+            (departments: Department[]) => {
+                this.departments = departments;
+            },
+            (error) => {
+                console.error('Error fetching departments:', error);
+            }
         );
-      }
+    }
+
+    users: Employee[];
+    filteredUsers: any[] | undefined;
+
+    getEmployee() {
+        this.assetService.getUsers().then(
+            (users: Employee[]) => {
+                this.users = users;
+            },
+            (error) => {
+                console.error('Error fetching employees:', error);
+            }
+        );
+    }
+
+    filterUsers(event: AutoCompleteCompleteEvent) {
+        let filtered: any[] = [];
+        let query = event.query;
+
+        if (this.users) {
+            filtered = this.users.filter((user) => {
+                const fullName = `${user.firstName}`;
+                return fullName.toLowerCase().includes(query.toLowerCase());
+            });
+        }
+
+        this.filteredUsers = filtered;
+    }
+
+    onFormSubmit() {
+        if (this.assetForm.valid) {
+            this.assetService.addAsset(this.assetForm.value).subscribe({
+                next: (val: any) => {
+                    alert('Asset Added');
+                    window.location.reload();
+                },
+                error: (err: any) => {
+                    console.error('API error:', err);
+                    // Check for specific error details from the API response
+                    if (err.error && err.error.message) {
+                        console.error('API error message:', err.error.message);
+                    }
+                },
+            });
+        }
+    }
+
+    departmentCodes: string[] = [];
+
+    getDepartmentCodes() {
+        this.assetService.getDepartmentCodes().subscribe(
+            (departmentCodes: string[]) => {
+                this.departmentCodes = departmentCodes;
+            },
+            (error) => {
+                console.error('Error fetching department codes:', error);
+            }
+        );
+    }
 }

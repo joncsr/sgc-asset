@@ -2,7 +2,7 @@
     <div class="col-12 lg:col-12">
         <div class="card">
             <h3>Add Asset</h3>
-            <form>
+            <form [formGroup]="assetForm" (ngSubmit)="onFormSubmit()">
                 <div formGroupName="assetInventoryDTO">
                     <div class="grid formgrid">
                         <div class="col-12 mb-2 lg:col-2 lg:mb-0">
@@ -13,6 +13,7 @@
                                 id="barcode"
                                 placeholder="Bar Code"
                                 formControlName="barcode"
+                                [ngStyle]="{ 'font-weight': 'bold' }"
                             />
                         </div>
                         <div class="col-12 mb-2 lg:col-3 lg:mb-0">
@@ -47,14 +48,14 @@
                         </div>
                     </div>
                     <div class="grid formgrid mt-5">
-                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                        <div class="col-6 mb-2 lg:col-2 lg:mb-0">
                             <label htmlFor="data_po">PO Date</label>
                             <p-calendar
                                 [showIcon]="true"
                                 formControlName="datePO"
                             ></p-calendar>
                         </div>
-                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                        <div class="col-6 mb-2 lg:col-2 lg:mb-0">
                             <label htmlFor="date_acquied">Date Acquired</label>
                             <p-calendar
                                 [showIcon]="true"
@@ -89,14 +90,16 @@
                             pInputText
                             placeholder="Company"
                             name="company"
+                            formControlName="company"
                         />
                     </div>
+
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                         <label htmlFor="department">Department</label>
                         <p-dropdown
                             formControlName="department"
-                            [options]="cities"
-                            optionLabel="name"
+                            [options]="departmentCodes"
+
                         ></p-dropdown>
                     </div>
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
@@ -104,7 +107,7 @@
                             >Accountability Number</label
                         >
                         <input
-                            type="number"
+                            type="text"
                             id="accountability"
                             pInputText
                             placeholder="Accountability Number"
@@ -112,13 +115,25 @@
                         />
                     </div>
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                        <label htmlFor="accountability"
+                            >EMP ID </label
+                        >
+                        <input
+                            type="number"
+                            id="empId"
+                            pInputText
+                            formControlName="empId"
+                        />
+                    </div>
+
+                    <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                         <label htmlFor="user">Current User</label>
                         <p-autoComplete
                             formControlName="currentUser"
                             [dropdown]="true"
-                            [suggestions]="filteredCountries"
-                            (completeMethod)="filterCountry($event)"
-                            field="name"
+                            [suggestions]="filteredUsers"
+                            (completeMethod)="filterUsers($event)"
+                            field="firstName"
                         ></p-autoComplete>
 
                     </div>
@@ -133,6 +148,7 @@
                             cols="30"
                             placeholder="Remarks Here"
                             pInputTextarea
+                            formControlName="remarks"
                         ></textarea>
                     </div>
                 </div>
@@ -141,10 +157,8 @@
                     <div class="col-12 mb-2 lg:col-1 lg:mb-0">
                         <button
                             pButton
-                            pRipple
-                            type="button"
-                            label="Add"
-                        ></button>
+                            type="submit"
+                        >ADD</button>
                     </div>
                 </div>
             </form>
