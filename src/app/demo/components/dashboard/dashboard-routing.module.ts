@@ -9,6 +9,7 @@ import { AddAssetComponent } from './assets/add-asset/add-asset.component';
         { path: '', component: DashboardComponent },
         { path: 'asset_table', component: AssetTableComponent },
         { path: 'add_asset', component: AddAssetComponent}
+
     ])],
     exports: [RouterModule]
 })

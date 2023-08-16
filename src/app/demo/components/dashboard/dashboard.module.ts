@@ -44,16 +44,15 @@ import { ChipModule } from 'primeng/chip';
 import { ScrollTopModule } from 'primeng/scrolltop';
 import { TagModule } from 'primeng/tag';
 import { BadgeModule } from 'primeng/badge';
-import { ComponentStorageComponent } from './component-storage/component-storage..component';
+import { ComponentStorageComponent } from './component-storage/component-storage.component';
 import { AddAssetComponent } from './assets/add-asset/add-asset.component';
 
-import { InputTextareaModule } from "primeng/inputtextarea";
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CalendarModule } from 'primeng/calendar';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-
-
+import { AssetUserComponent } from './asset-user/asset-user.component';
 
 @NgModule({
     imports: [
@@ -107,8 +106,6 @@ import { ReactiveFormsModule } from '@angular/forms';
         AutoCompleteModule,
         ReactiveFormsModule,
 
-
-
         RouterModule.forChild([
             {
                 path: '',
@@ -122,7 +119,7 @@ import { ReactiveFormsModule } from '@angular/forms';
                     },
                     { path: 'request', component: RequestComponent },
                     { path: 'seat', component: SeatComponent },
-                    { path: 'payment', component: PaymentComponent },
+                    { path: 'asset_user', component: AssetUserComponent },
                 ],
             },
         ]),
@@ -133,7 +130,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         AssetComponent,
         RequestComponent,
         ComponentStorageComponent,
-        AddAssetComponent
+        AddAssetComponent,
+        AssetUserComponent
     ],
 })
 export class DashboardModule {}

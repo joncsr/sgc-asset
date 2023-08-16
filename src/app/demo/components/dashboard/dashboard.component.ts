@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             { label: 'Asset', routerLink: 'asset' },
             { label: 'Component Storage', routerLink: 'component_storage' },
             { label: 'Request', routerLink: 'request', badge: '25' },
-            { label: 'Others', routerLink: 'payment' },
+            { label: 'Asset User', routerLink: 'asset_user' },
             { label: 'Others', routerLink: 'confirmation' },
         ];
     }

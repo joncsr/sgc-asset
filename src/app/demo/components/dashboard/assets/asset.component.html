@@ -1,20 +1,19 @@
 <p-tabMenu [model]="items"></p-tabMenu>
 <br />
+
 <div class="card">
     <h5>Asset Table</h5>
     <p-table
         #dt1
         [value]="assets"
         dataKey="id"
-        [rows]="10"
+        [rows]="5"
         [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[5, 10, 20]"
         [loading]="loading"
         [paginator]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [globalFilterFields]="[
-            '',
-        ]"
+        [globalFilterFields]="['']"
     >
         <ng-template pTemplate="caption">
             <div class="flex">
@@ -32,6 +31,13 @@
                         (click)="upload_asset = true"
                         pButton
                         icon="pi pi-upload"
+                    ></button>
+
+                    <button
+                        style="margin-left: 5px"
+                        (click)="upload_asset = true"
+                        pButton
+                        icon="pi pi-download"
                     ></button>
                 </div>
 
@@ -60,24 +66,20 @@
                         ></p-columnFilter>
                     </div>
                 </th>
-                <th style="min-width: 15rem">
+                <th style="min-width: 10rem">
                     <div class="flex align-items-center">Barcode</div>
+                </th>
+                <th style="width: 10rem">
+                    <div class="flex align-items-center">User</div>
                 </th>
                 <th style="min-width: 10rem">
                     <div class="flex align-items-center">Unit Name</div>
                 </th>
                 <th style="min-width: 10rem">
-                    <div class="flex align-items-center">Serial Number</div>
-                </th>
-                <th style="min-width: 10rem">
                     <div class="flex align-items-center">Specification</div>
                 </th>
-
-                <th style="min-width: 10rem">
-                    <div class="flex align-items-center">Date Aquired</div>
-                </th>
-                <th style="width: 5rem">
-                    <div class="flex align-items-center">User</div>
+                <th style="min-width: 5rem">
+                    <div class="flex align-items-end">Action</div>
                 </th>
             </tr>
         </ng-template>
@@ -85,7 +87,12 @@
         <ng-template pTemplate="body" let-asset>
             <tr>
                 <td>
-                   <img src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg" alt="" width="80px" height="80px">
+                    <img
+                        src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
+                        alt=""
+                        width="80px"
+                        height="80px"
+                    />
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
@@ -93,28 +100,33 @@
                     </span>
                 </td>
                 <td>
+                    {{ asset.empId }}
+                </td>
+                <td>
                     <span class="ml-1 vertical-align-middle">
-                        {{ asset.assetInventoryDTO.serialNo }}
+                        {{ asset.assetInventoryDTO.unit }}
                     </span>
                 </td>
                 <td>
                     {{ asset.assetInventoryDTO.specs }}
                 </td>
                 <td>
-                    {{
-                        asset.assetInventoryDTO.dateAcquired
-                            | date : "MM/dd/yyyy"
-                    }}
-                </td>
-
-                <td>
-                    {{
-                        asset.assetInventoryDTO.dateAcquired
-                            | date : "MM/dd/yyyy"
-                    }}
-                </td>
-                <td>
-                    {{ asset.currentUser }}
+                    <div class="flex">
+                        <button
+                            pButton
+                            pRipple
+                            icon="pi pi-pencil"
+                            class="p-button-rounded p-button-success mr-2"
+                            (click)="editProduct()"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            icon="pi pi-trash"
+                            class="p-button-rounded p-button-warning"
+                            (click)="deleteProduct()"
+                        ></button>
+                    </div>
                 </td>
             </tr>
         </ng-template>
@@ -179,7 +191,7 @@
              (click)="upload_asset = false"
              label="Upload"
              class="p-button-outlined mt-5"
-         ></button> -->
+></button> -->
 
 <!-- <p-fileUpload
 name="demo[]"

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { AssetAssignedDTO, AssetInventoryDTO } from '../models/uploading.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Department, Employee } from '../models/employee.model';
+import { Department, Employee, EmployeeAcount } from '../models/employee.model';
 import { catchError, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
@@ -64,11 +64,9 @@ export class AssetService {
             .pipe(map((response: any) => response.$values));
     }
 
-    getUsers(): Observable<string[]> {
-        return this._http.get<any[]>('/api/Employee').pipe(
-            map((users: any[]) => users.map(user => user.firstName))
-        );
-    }
+    getUsers(): Observable<Employee[]> {
+        return this._http.get<Employee[]>('/api/Employee');
+      }
 
 
     getEmployeeFirstName() {
@@ -81,5 +79,10 @@ export class AssetService {
                 return []; // Return an empty array in case of an error
             })
         );
+    }
+
+    getEmployeeAccount(): Observable<EmployeeAcount[]>
+    {
+        return this._http.get<EmployeeAcount[]>('/api/EmployeeAccount');
     }
 }

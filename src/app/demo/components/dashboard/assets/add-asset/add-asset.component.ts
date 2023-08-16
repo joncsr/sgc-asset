@@ -64,8 +64,8 @@ export class AddAssetComponent implements OnInit {
             company: ['', Validators.required],
             department: [''],
             accountabilityNo: ['', Validators.required],
-            currentUser: [''],
-            empId: [''],
+
+            empId: [this.selectedUserId],
             remarks: ['', Validators.required],
         });
     }
@@ -124,12 +124,15 @@ export class AddAssetComponent implements OnInit {
         );
     }
 
-    users: string[] = [];
+    users: Employee[] = [];
+
+
+
     filteredUsers: any[] | undefined;
 
     getEmployee() {
         this.assetService.getUsers().subscribe(
-            (users: string[]) => {
+            (users: Employee[]) => {
                 this.users = users;
             },
             (error) => {
@@ -137,19 +140,18 @@ export class AddAssetComponent implements OnInit {
             }
         );
     }
-
     filterUsers(event: AutoCompleteCompleteEvent) {
-        let filtered: any[] = [];
+        let filtered: Employee[] = [];
         let query = event.query;
 
         if (this.users) {
-            filtered = this.users.filter((user) => {
-                return user.toLowerCase().includes(query.toLowerCase());
-            });
+          filtered = this.users.filter((user) => {
+            return user.firstName.toLowerCase().includes(query.toLowerCase());
+          });
         }
 
         this.filteredUsers = filtered;
-    }
+      }
 
     onFormSubmit() {
         if (this.assetForm.valid) {
@@ -182,21 +184,20 @@ export class AddAssetComponent implements OnInit {
         );
     }
 
+    selectedUserId: number | null = null;
+
     setupCurrentUserListener() {
         this.assetForm.get('currentUser').valueChanges.subscribe((selectedUser) => {
           // Assuming your currentUser object has a property named empId
-          const empId = selectedUser?.id || null ;
+          const empId = selectedUser?.id || '' ;
           this.assetForm.get('empId').setValue(empId); // Update the empId field value
         });
       }
 
-      SelectedValue: any;
-
-
-      ChangeUser(e){
-
-        console.log(e.target.value)
-        this.SelectedValue= e.target.value
-
+      onUserSelect(selectedUser: Employee) {
+        this.selectedUserId = selectedUser.id;
+        this.assetForm.patchValue({
+          empId: this.selectedUserId
+        });
       }
 }

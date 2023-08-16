@@ -36,54 +36,21 @@ export class AssetComponent implements OnInit {
     Data: any;
     fileContent: string;
 
+    action: MenuItem[] | undefined;
 
-
-
-
-  constructor(
-    private assetService: AssetService,
-    private _http: HttpClient,
-    private formBuilder: FormBuilder,
-    private customerService: CustomerService
-    ){
-      this.uploadForm = this.formBuilder.group({
-        fileInput: ['', Validators.required]
-      });
+    constructor(
+        private assetService: AssetService,
+        private _http: HttpClient,
+        private formBuilder: FormBuilder,
+        private customerService: CustomerService
+    ) {
+        this.uploadForm = this.formBuilder.group({
+            fileInput: ['', Validators.required],
+        });
     }
 
-
-
     ngOnInit() {
-        this.customerService.getCustomersLarge().then((customers) => {
-            this.customers = customers;
-            this.loading = false;
 
-            this.customers.forEach((customer) => {
-                customer.date = new Date(customer.date).toISOString(); // Convert Date to ISO string
-            });
-        });
-
-        this.representatives = [
-            { name: 'Amy Elsner', image: 'amyelsner.png' },
-            { name: 'Anna Fali', image: 'annafali.png' },
-            { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-            { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-            { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-            { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-            { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-            { name: 'Onyama Limba', image: 'onyamalimba.png' },
-            { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-            { name: 'Xuxue Feng', image: 'xuxuefeng.png' },
-        ];
-
-        this.statuses = [
-            { label: 'Unqualified', value: 'unqualified' },
-            { label: 'Qualified', value: 'qualified' },
-            { label: 'New', value: 'new' },
-            { label: 'Negotiation', value: 'negotiation' },
-            { label: 'Renewal', value: 'renewal' },
-            { label: 'Proposal', value: 'proposal' },
-        ];
 
         this.items = [
             { label: 'Desktop', icon: 'pi pi-fw pi-twitter' },
@@ -91,6 +58,17 @@ export class AssetComponent implements OnInit {
             { label: 'TV', icon: 'pi pi-fw pi-twitter' },
             { label: 'Printer', icon: 'pi pi-fw pi-twitter' },
             { label: 'Others', icon: 'pi pi-fw pi-twitter' },
+        ];
+
+        this.action = [
+            {
+                label: 'Update',
+                icon: 'pi pi-refresh',
+            },
+            {
+                label: 'Delete',
+                icon: 'pi pi-times',
+            },
         ];
 
         this.serialNumber();
@@ -106,16 +84,16 @@ export class AssetComponent implements OnInit {
 
     onBasicUpload(): void {
         if (this.uploadForm.valid && this.fileContent) {
-            const file = new File([this.fileContent], 'data.csv', { type: 'text/csv' });
+            const file = new File([this.fileContent], 'data.csv', {
+                type: 'text/csv',
+            });
 
             // Make the API call and handle the response
-            this.assetService.uploadCSV(file).subscribe(
-              (response) => {
+            this.assetService.uploadCSV(file).subscribe((response) => {
                 // Handle the successful response here
-                alert("File Uploaded");
-              }
-            );
-          }
+                alert('File Uploaded');
+            });
+        }
     }
 
     serialNumber() {
@@ -127,61 +105,67 @@ export class AssetComponent implements OnInit {
             );
         }
     }
-    // getRandomSerialNumber() {
-    //     return this.serialNumbers[
-    //         Math.floor(Math.random() * this.serialNumbers.length)
-    //     ];
-    // }
 
 
     onFileSelected(event: any) {
         const file: File = event.target.files[0];
 
         if (file) {
-          const reader: FileReader = new FileReader();
-          reader.onload = (e) => {
-            this.fileContent = reader.result as string;
-          };
-          reader.readAsText(file);
+            const reader: FileReader = new FileReader();
+            reader.onload = (e) => {
+                this.fileContent = reader.result as string;
+            };
+            reader.readAsText(file);
         }
-      }
+    }
 
-      onSubmit(): void {
+    onSubmit(): void {
         if (this.uploadForm.valid && this.fileContent) {
-          const file = new File([this.fileContent], 'data.csv', { type: 'text/csv' });
+            const file = new File([this.fileContent], 'data.csv', {
+                type: 'text/csv',
+            });
 
-          // Make the API call and handle the response
-          this.assetService.uploadCSV(file).pipe(
-            catchError((error) => {
-              // Handle the error here
-              console.error('An error occurred while uploading the file:', error);
-              alert('An error occurred while uploading the file.');
-              window.location.reload();
-              return of(null); // Return a placeholder observable to continue the stream
-
-            })
-
-          ).subscribe(
-            (response) => {
-              if (response !== null) {
-                // Handle the successful response here
-                alert('File Uploaded');
-                window.location.reload();
-              }
-            }
-          );
+            // Make the API call and handle the response
+            this.assetService
+                .uploadCSV(file)
+                .pipe(
+                    catchError((error) => {
+                        // Handle the error here
+                        console.error(
+                            'An error occurred while uploading the file:',
+                            error
+                        );
+                        alert('An error occurred while uploading the file.');
+                        window.location.reload();
+                        return of(null); // Return a placeholder observable to continue the stream
+                    })
+                )
+                .subscribe((response) => {
+                    if (response !== null) {
+                        // Handle the successful response here
+                        alert('File Uploaded');
+                        window.location.reload();
+                    }
+                });
         }
-      }
+    }
 
-      assets: AssetAssignedDTO[] = []
+    assets: AssetAssignedDTO[] = [];
 
-      getAssets() {
+
+
+    getAssets() {
         this.assetService.getAsset().subscribe((data: any) => {
-          this.assets = data; // Assuming the array is stored in the '$values' property
-          // Calling the DT trigger to manually render the table
-          console.log(this.assets)
+            this.assets = data;
         });
-      }
+        this.loading = false;
+    }
 
+    editProduct() {
 
+    }
+
+    deleteProduct() {
+
+    }
 }

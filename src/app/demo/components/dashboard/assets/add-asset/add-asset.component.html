@@ -118,14 +118,13 @@
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                         <label htmlFor="user">Current User</label>
                         <p-autoComplete
-
-                            formControlName="currentUser"
-                            [dropdown]="true"
-                            [suggestions]="filteredUsers"
-                            (completeMethod)="filterUsers($event)"
-                            (change) = "ChangeUser($event)"
-                        ></p-autoComplete>
-                        {{SelectedValue}}
+                        formControlName="currentUser"
+                        [dropdown]="true"
+                        [suggestions]="filteredUsers"
+                        (completeMethod)="filterUsers($event)"
+                        field="firstName"
+                        (onSelect)="onUserSelect($event)"
+                      ></p-autoComplete>
                     </div>
                 </div>
 

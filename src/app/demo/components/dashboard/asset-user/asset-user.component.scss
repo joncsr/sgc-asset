@@ -1,0 +1,14 @@
+.customer-badge.status-active {
+    background-color: green; /* Set your desired color for 'active' status */
+    color: white; /* Set text color for contrast */
+}
+
+.customer-badge.status-inactive {
+    background-color: gray; /* Set your desired color for 'inactive' status */
+    color: white; /* Set text color for contrast */
+}
+
+.customer-badge.status-processing {
+    background-color: orange; /* Set your desired color for 'processing' status */
+    color: white; /* Set text color for contrast */
+}
