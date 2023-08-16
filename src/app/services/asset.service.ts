@@ -33,7 +33,7 @@ export class AssetService {
         return this._http.post<AssetAssignedDTO[]>('/api/AssetAssigned', data);
     }
     getAsset(): Observable<AssetInventoryDTO[]> {
-        return this._http.get<AssetInventoryDTO[]>('/api/AssetAssigned');
+        return this._http.get<AssetInventoryDTO[]>('/api/api/AssetAssignedTABLE');
     }
 
     importCSVData(csvData: string) {

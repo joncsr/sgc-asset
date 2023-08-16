@@ -5,6 +5,7 @@ import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { catchError, of } from 'rxjs';
 import { Customer, Representative } from 'src/app/demo/api/customer';
+import { Product } from 'src/app/demo/api/product';
 import { CustomerService } from 'src/app/demo/service/customer.service';
 import { AssetAssignedDTO } from 'src/app/models/uploading.model';
 import { AssetService } from 'src/app/services/asset.service';
@@ -27,6 +28,7 @@ export class AssetComponent implements OnInit {
 
     add_asset: boolean = false;
     upload_asset: boolean = false;
+    download_asset: boolean = false;
 
     items: MenuItem[] | undefined;
 
@@ -37,6 +39,10 @@ export class AssetComponent implements OnInit {
     fileContent: string;
 
     action: MenuItem[] | undefined;
+
+    visible: boolean = false;
+    edit: boolean = false;
+    delete: boolean = false;
 
     constructor(
         private assetService: AssetService,
@@ -50,8 +56,6 @@ export class AssetComponent implements OnInit {
     }
 
     ngOnInit() {
-
-
         this.items = [
             { label: 'Desktop', icon: 'pi pi-fw pi-twitter' },
             { label: 'Laptop', icon: 'pi pi-fw pi-twitter' },
@@ -106,7 +110,6 @@ export class AssetComponent implements OnInit {
         }
     }
 
-
     onFileSelected(event: any) {
         const file: File = event.target.files[0];
 
@@ -151,6 +154,7 @@ export class AssetComponent implements OnInit {
     }
 
     assets: AssetAssignedDTO[] = [];
+    getasset: AssetAssignedDTO = {}
 
 
 
@@ -161,11 +165,16 @@ export class AssetComponent implements OnInit {
         this.loading = false;
     }
 
-    editProduct() {
-
+    editProduct(getasset: AssetAssignedDTO) {
+        this.getasset = { ...getasset }
+        this.edit = true;
     }
 
     deleteProduct() {
+        this.delete = true;
+    }
 
+    showDialog() {
+        this.visible = true;
     }
 }
