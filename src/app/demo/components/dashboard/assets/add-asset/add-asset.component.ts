@@ -9,6 +9,7 @@ import { CustomerService } from 'src/app/demo/service/customer.service';
 import { Department, Employee } from 'src/app/models/employee.model';
 import { AssetService } from 'src/app/services/asset.service';
 import { FormControl } from '@angular/forms';
+import { DropdownService } from 'src/app/services/dropdowns.service';
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;
@@ -34,7 +35,8 @@ export class AddAssetComponent implements OnInit {
     constructor(
         private countryService: CountryService,
         private formBuilder: FormBuilder,
-        private assetService: AssetService
+        private assetService: AssetService,
+        private dropdownService: DropdownService
     ) {}
 
     ngOnInit(): void {
@@ -42,6 +44,8 @@ export class AddAssetComponent implements OnInit {
         // this.getDepartments();
         this.getEmployee();
         this.getDepartmentCodes();
+        this.getCompanyCodes();
+        this.getUnitTypes();
         this.setupCurrentUserListener();
     }
 
@@ -64,7 +68,7 @@ export class AddAssetComponent implements OnInit {
             company: ['', Validators.required],
             department: [''],
             accountabilityNo: ['', Validators.required],
-
+            currentUser: [''],
             empId: [this.selectedUserId],
             remarks: ['', Validators.required],
         });
@@ -146,7 +150,7 @@ export class AddAssetComponent implements OnInit {
 
         if (this.users) {
           filtered = this.users.filter((user) => {
-            return user.firstName.toLowerCase().includes(query.toLowerCase());
+            return user.fullName.toLowerCase().includes(query.toLowerCase());
           });
         }
 
@@ -172,7 +176,6 @@ export class AddAssetComponent implements OnInit {
     }
 
     departmentCodes: string[] = [];
-
     getDepartmentCodes() {
         this.assetService.getDepartmentCodes().subscribe(
             (departmentCodes: string[]) => {
@@ -183,6 +186,34 @@ export class AddAssetComponent implements OnInit {
             }
         );
     }
+
+    companyCodes: string[] = [];
+    getCompanyCodes(){
+        this.dropdownService.getCompanyCodes().subscribe(
+            (companyCodes: string[]) => {
+                this.companyCodes = companyCodes;
+            },
+            (error) => {
+                console.error('Error fetching department codes:', error);
+            }
+        );
+    }
+
+    unitTypes: string[] = [];
+    getUnitTypes(){
+        this.dropdownService.getUnitTypes().subscribe(
+            (unitTypes: string[]) => {
+                this.unitTypes = unitTypes;
+            },
+            (error) => {
+                console.error('Error fetching department codes:', error);
+            }
+        );
+    }
+
+
+
+
 
     selectedUserId: number | null = null;
 
@@ -200,4 +231,8 @@ export class AddAssetComponent implements OnInit {
           empId: this.selectedUserId
         });
       }
+
+
+
+
 }

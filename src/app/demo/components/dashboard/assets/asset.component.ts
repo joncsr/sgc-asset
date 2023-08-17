@@ -7,7 +7,7 @@ import { catchError, of } from 'rxjs';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { Product } from 'src/app/demo/api/product';
 import { CustomerService } from 'src/app/demo/service/customer.service';
-import { AssetAssignedDTO } from 'src/app/models/uploading.model';
+import { AssetAssignedDTO, AssetAssignedDTOView,  } from 'src/app/models/uploading.model';
 import { AssetService } from 'src/app/services/asset.service';
 
 @Component({
@@ -43,6 +43,7 @@ export class AssetComponent implements OnInit {
     visible: boolean = false;
     edit: boolean = false;
     delete: boolean = false;
+    dt: any;
 
     constructor(
         private assetService: AssetService,
@@ -154,9 +155,7 @@ export class AssetComponent implements OnInit {
     }
 
     assets: AssetAssignedDTO[] = [];
-    getasset: AssetAssignedDTO = {}
-
-
+    asset: AssetAssignedDTOView
 
     getAssets() {
         this.assetService.getAsset().subscribe((data: any) => {
@@ -165,16 +164,37 @@ export class AssetComponent implements OnInit {
         this.loading = false;
     }
 
-    editProduct(getasset: AssetAssignedDTO) {
-        this.getasset = { ...getasset }
+    editProduct(asset: AssetAssignedDTO) {
+        this.asset = asset;
         this.edit = true;
     }
 
-    deleteProduct() {
+    deleteProduct(asset: AssetAssignedDTO) {
+        this.asset = asset;
         this.delete = true;
     }
 
-    showDialog() {
+    showDialog(viewAsset: AssetAssignedDTO) {
+        this.asset = viewAsset;
         this.visible = true;
     }
+
+    filter(filterValue: string[]) {
+        if (filterValue.length === 0) {
+            // No filters selected, reset the filter
+            this.dt.filter(null, 'assets', 'in');
+        } else {
+            this.dt.filter((value: AssetAssignedDTO) => {
+                if (filterValue.includes('false') && value.isAvailable === false) {
+                    return true;
+                }
+                if (filterValue.includes('true') && value.isAvailable === true) {
+                    return true;
+                }
+                return false;
+            }, 'assets', 'custom');
+        }
+    }
+
+
 }

@@ -17,14 +17,12 @@
                             />
                         </div>
                         <div class="col-12 mb-2 lg:col-3 lg:mb-0">
-                            <label htmlFor="unit">Unit Name</label>
-                            <input
-                                type="text"
-                                id="unit"
-                                pInputText
-                                placeholder="Unit Name"
-                                formControlName="unit"
-                            />
+                            <label htmlFor="unit">Unit Type</label>
+                            <p-dropdown
+                            formControlName="unit"
+                            [options]="unitTypes"
+
+                        ></p-dropdown>
                         </div>
                         <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                             <label htmlFor="serialNo">Serial Number</label>
@@ -84,14 +82,11 @@
                 <div class="grid formgrid mt-5">
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                         <label htmlFor="company">Company</label>
-                        <input
-                            type="text"
-                            id="company"
-                            pInputText
-                            placeholder="Company"
-                            name="company"
+                        <p-dropdown
                             formControlName="company"
-                        />
+                            [options]="companyCodes"
+
+                        ></p-dropdown>
                     </div>
 
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
@@ -122,7 +117,7 @@
                         [dropdown]="true"
                         [suggestions]="filteredUsers"
                         (completeMethod)="filterUsers($event)"
-                        field="firstName"
+                        field="fullName"
                         (onSelect)="onUserSelect($event)"
                       ></p-autoComplete>
                     </div>
@@ -147,7 +142,8 @@
                         <button
                             pButton
                             type="submit"
-                        >ADD</button>
+                            label="Submit"
+                        ></button>
                     </div>
                 </div>
             </form>

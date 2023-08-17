@@ -13,7 +13,14 @@
         [loading]="loading"
         [paginator]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [globalFilterFields]="['']"
+        [globalFilterFields]="[
+            'employeeDTO.lastname',
+            'employeeDTO.firstname',
+            'assetInventoryDTO.unit',
+            'employeeDTO.employeeCode',
+            'assetInventoryDTO.specs',
+            'isAvailable'
+        ]"
     >
         <ng-template pTemplate="caption">
             <div class="flex">
@@ -66,9 +73,7 @@
                         ></p-columnFilter>
                     </div>
                 </th>
-                <th style="width: 15rem">
-                    <div class="flex align-items-center">User/Availability</div>
-                </th>
+
                 <th style="min-width: 10rem">
                     <div class="flex align-items-center">Barcode</div>
                 </th>
@@ -76,7 +81,18 @@
                     <div class="flex align-items-center">Unit Type</div>
                 </th>
                 <th style="min-width: 10rem">
-                    <div class="flex align-items-center">Specification</div>
+                    <div class="flex align-items-center">Specification
+                        <p-columnFilter
+                        type="text"
+                        field="assetInventoryDTO.specs"
+                        display="menu"
+                    ></p-columnFilter>
+                    </div>
+                </th>
+                <th style="width: 15rem">
+                    <div class="flex align-items-center">
+                        Availability
+                    </div>
                 </th>
                 <th style="min-width: 5rem">
                     <div class="flex align-items-end">Action</div>
@@ -84,20 +100,15 @@
             </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-asset >
-            <tr >
-                <td (click)="showDialog()" >
+        <ng-template pTemplate="body" let-asset>
+            <tr>
+                <td (click)="showDialog(asset)">
                     <img
                         src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
                         alt=""
                         width="80px"
                         height="80px"
                     />
-                </td>
-                <td>
-                    {{ asset.employeeDTO.firstname }}
-                    {{ asset.employeeDTO.middlename }}
-                    {{ asset.employeeDTO.lastname }}
                 </td>
                 <td>
                     <span class="ml-1 vertical-align-middle">
@@ -113,6 +124,15 @@
                     {{ asset.assetInventoryDTO.specs }}
                 </td>
                 <td>
+                    {{
+                        asset.isAvailable === false
+                            ? "Allocated"
+                            : asset.isAvailable === true
+                            ? "Available"
+                            : asset.isAvailable
+                    }}
+                </td>
+                <td>
                     <div class="flex">
                         <button
                             pButton
@@ -126,7 +146,7 @@
                             pRipple
                             icon="pi pi-trash"
                             class="p-button-rounded p-button-warning"
-                            (click)="deleteProduct()"
+                            (click)="deleteProduct(asset)"
                         ></button>
                     </div>
                 </td>
@@ -195,32 +215,140 @@
     [style]="{ width: '15vw' }"
     [breakpoints]="{ '960px': '75vw' }"
 >
-        <button
-            type="submit"
-            pButton
-            icon="pi pi-download"
-            label="Export"
-            class="mt-5"
-        ></button>
-
+    <button
+        type="submit"
+        pButton
+        icon="pi pi-download"
+        label="Export"
+        class="mt-5"
+    ></button>
 </p-dialog>
 
-<p-dialog header="Edit" [(visible)]="edit" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
-
-
-
+<p-dialog
+    header="Edit"
+    [(visible)]="edit"
+    [breakpoints]="{ '960px': '75vw' }"
+    [style]="{ width: '50vw' }"
+    [draggable]="false"
+    [resizable]="false"
+>
+    <p *ngIf="asset">
+        <img
+            src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
+            alt=""
+            width="80px"
+            height="80px"
+        />
+        {{ asset?.assetInventoryDTO?.barcode }}
+        {{ asset?.company }}
+        {{ asset?.department }}
+        {{ asset?.employeeDTO?.firstname }}
+    </p>
+    this is edit modal
 </p-dialog>
-<p-dialog header="Delete" [(visible)]="delete" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
+<p-dialog
+    header="Delete"
+    [(visible)]="delete"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [draggable]="false"
+    [resizable]="false"
+>
     <p class="m-0">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.
     </p>
 </p-dialog>
-<p-dialog header="View" [(visible)]="visible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
-    <p class="m-0">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
+<p-dialog
+    header="View"
+    [(visible)]="visible"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [draggable]="false"
+    [resizable]="false"
+>
+    <div *ngIf="asset" class="">
+        <div class="grid">
+            <div class="col-12 lg:col-6 xl:col-5">
+                <div class="card mb-0">
+                    <div class="flex justify-content-between mb-3">
+                        <p-image
+                        src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
+                            alt="Image"
+                            width="300"
+                            [preview]="true"
+                        ></p-image>
+                    </div>
+                    <span class="text-green-500 font-medium">{{
+                        asset.assetInventoryDTO.barcode
+                    }}</span>
+                    <p>{{ asset.assetInventoryDTO.unit }}</p>
+                    <p class="text-red-500 font-medium">
+                        {{ asset.assetInventoryDTO.serialNo }}
+                    </p>
+                </div>
+            </div>
+            <div class="col-12 lg:col-6 xl:col-3">
+                <span class="text-green-500 font-medium">
+                    <u>{{ asset.assetInventoryDTO.specs }}</u>
+                </span>
+                <p>Specification</p>
+                <span class="text-green-500 font-medium"
+                    ><u>{{ asset.accountabilityNo }}</u></span
+                >
+                <p>Accountability Number</p>
+                <span class="text-green-500 font-medium"
+                    ><u>{{ asset.company }}</u></span
+                >
+                <p>Company</p>
+                <span class="text-green-500 font-medium"
+                    ><u>{{ asset.department }}</u></span
+                >
+                <p>Department</p>
+                <span class="text-red-600 font-medium">{{
+                    asset.remarks
+                }}</span>
+                <p>Remarks</p>
+            </div>
+            <div class="col-12 lg:col-6 xl:col-4">
+                <span class="text-green-500 font-medium">
+                    <u>{{ asset.assetInventoryDTO.vendor }}</u>
+                </span>
+                <p>Vendor</p>
+                <span class="text-green-500 font-medium">
+                    <u>{{ asset.assetInventoryDTO.warranty }}</u>
+                </span>
+                <p>Warranty</p>
+                <span class="text-green-500 font-medium">
+                    <u>{{ asset.assetInventoryDTO.datePO | date }}</u>
+                </span>
+                <p>Date PO</p>
+                <span class="text-green-500 font-medium">
+                    <u>{{
+                        asset.assetInventoryDTO.dateAcquired === null
+                            ? "Empty Field"
+                            : asset.assetInventoryDTO.dateAcquired
+                    }}</u>
+                </span>
+                <p>Date Acquired</p>
+                <span class="font-medium">
+                    <p-tag
+                        icon="pi pi-user"
+                        value="{{ asset.isAvailable === false ? asset.employeeDTO?.fullName : 'No User' }}"
+                    >
+                        <p></p>
+                    </p-tag>
+                </span>
+                <p class="font-medium">Current User</p>
+            </div>
+        </div>
+        <p-accordion [activeIndex]="0">
+            <p-accordionTab header="History"> Pas user info </p-accordionTab>
+        </p-accordion>
+    </div>
 </p-dialog>
-
-

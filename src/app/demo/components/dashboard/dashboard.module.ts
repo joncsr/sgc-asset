@@ -53,7 +53,10 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AssetUserComponent } from './asset-user/asset-user.component';
-
+import { SplitterModule } from 'primeng/splitter';
+import { AccordionModule } from 'primeng/accordion';
+import { DataViewModule, DataViewLayoutOptions } from 'primeng/dataview';
+import { ImageModule } from 'primeng/image';
 @NgModule({
     imports: [
         CommonModule,
@@ -63,6 +66,8 @@ import { AssetUserComponent } from './asset-user/asset-user.component';
         TableModule,
         StyleClassModule,
         PanelMenuModule,
+        DataViewModule,
+
 
         DashboardsRoutingModule,
         FileUploadModule,
@@ -105,6 +110,10 @@ import { AssetUserComponent } from './asset-user/asset-user.component';
         CalendarModule,
         AutoCompleteModule,
         ReactiveFormsModule,
+
+        SplitterModule,
+        AccordionModule,
+        ImageModule,
 
         RouterModule.forChild([
             {

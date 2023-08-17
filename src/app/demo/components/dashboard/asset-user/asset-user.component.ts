@@ -3,7 +3,7 @@ import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CustomerService } from 'src/app/demo/service/customer.service';
-import { Employee, EmployeeAcount } from 'src/app/models/employee.model';
+import { Employee, EmployeeAccount } from 'src/app/models/employee.model';
 import { AssetService } from 'src/app/services/asset.service';
 import * as diacritics from 'diacritics';
 
@@ -37,11 +37,11 @@ export class AssetUserComponent implements OnInit {
         table.clear();
     }
 
-    employees: EmployeeAcount[] = [];
+    employees: EmployeeAccount[] = [];
     getEmployee() {
         this.assetService
             .getEmployeeAccount()
-            .subscribe((data: EmployeeAcount[]) => {
+            .subscribe((data: EmployeeAccount[]) => {
                 this.employees = data.sort((a, b) =>
                     a.employeeDTO.lastname.localeCompare(b.employeeDTO.lastname)
                 );
@@ -54,6 +54,7 @@ export class AssetUserComponent implements OnInit {
                 });
             });
     }
+
 
     filterTableGlobal(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;

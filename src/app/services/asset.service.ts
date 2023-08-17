@@ -3,7 +3,11 @@ import { Injectable } from '@angular/core';
 import { AssetAssignedDTO, AssetInventoryDTO } from '../models/uploading.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Department, Employee, EmployeeAcount } from '../models/employee.model';
+import {
+    Department,
+    Employee,
+    EmployeeAccount,
+} from '../models/employee.model';
 import { catchError, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
@@ -33,7 +37,9 @@ export class AssetService {
         return this._http.post<AssetAssignedDTO[]>('/api/AssetAssigned', data);
     }
     getAsset(): Observable<AssetInventoryDTO[]> {
-        return this._http.get<AssetInventoryDTO[]>('/api/api/AssetAssignedTABLE');
+        return this._http.get<AssetInventoryDTO[]>(
+            '/api/api/AssetAssignedTABLE'
+        );
     }
 
     importCSVData(csvData: string) {
@@ -52,9 +58,13 @@ export class AssetService {
     }
 
     getDepartmentCodes(): Observable<string[]> {
-        return this._http.get<Department[]>('/api/Departments').pipe(
-            map((departments: Department[]) => departments.map(department => department.deptCode))
-        );
+        return this._http
+            .get<Department[]>('/api/Departments')
+            .pipe(
+                map((departments: Department[]) =>
+                    departments.map((department) => department.deptCode)
+                )
+            );
     }
 
     // Assuming 'Employee' interface or class is defined for the Employee data model.
@@ -66,13 +76,12 @@ export class AssetService {
 
     getUsers(): Observable<Employee[]> {
         return this._http.get<Employee[]>('/api/Employee');
-      }
-
+    }
 
     getEmployeeFirstName() {
         return this._http.get<Employee[]>('/api/Employee').pipe(
             map((employees: Employee[]) => {
-                return employees.map(employee => employee.firstName);
+                return employees.map((employee) => employee.firstname);
             }),
             catchError((error) => {
                 console.error('Error fetching employee first names:', error);
@@ -81,8 +90,7 @@ export class AssetService {
         );
     }
 
-    getEmployeeAccount(): Observable<EmployeeAcount[]>
-    {
-        return this._http.get<EmployeeAcount[]>('/api/EmployeeAccount');
+    getEmployeeAccount(): Observable<EmployeeAccount[]> {
+        return this._http.get<EmployeeAccount[]>('/api/EmployeeAccount');
     }
 }
