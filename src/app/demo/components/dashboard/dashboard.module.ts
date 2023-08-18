@@ -57,6 +57,9 @@ import { SplitterModule } from 'primeng/splitter';
 import { AccordionModule } from 'primeng/accordion';
 import { DataViewModule, DataViewLayoutOptions } from 'primeng/dataview';
 import { ImageModule } from 'primeng/image';
+import { EditAssetComponent } from './assets/edit-asset/edit-asset.component';
+import { MessageService } from 'primeng/api';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -115,6 +118,7 @@ import { ImageModule } from 'primeng/image';
         AccordionModule,
         ImageModule,
 
+
         RouterModule.forChild([
             {
                 path: '',
@@ -136,11 +140,14 @@ import { ImageModule } from 'primeng/image';
     declarations: [
         DashboardComponent,
         AssetTableComponent,
+        EditAssetComponent,
         AssetComponent,
         RequestComponent,
         ComponentStorageComponent,
         AddAssetComponent,
         AssetUserComponent
     ],
+
+    providers: [MessageService],
 })
 export class DashboardModule {}

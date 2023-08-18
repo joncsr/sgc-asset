@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <div class="grid p-fluid">
     <div class="col-12 lg:col-12">
         <div class="card">
@@ -11,18 +12,16 @@
                                 type="text"
                                 pInputText
                                 id="barcode"
-                                placeholder="Bar Code"
                                 formControlName="barcode"
                                 [ngStyle]="{ 'font-weight': 'bold' }"
                             />
                         </div>
-                        <div class="col-12 mb-2 lg:col-3 lg:mb-0">
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
                             <label htmlFor="unit">Unit Type</label>
                             <p-dropdown
-                            formControlName="unit"
-                            [options]="unitTypes"
-
-                        ></p-dropdown>
+                                formControlName="unit"
+                                [options]="unitTypes"
+                            ></p-dropdown>
                         </div>
                         <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                             <label htmlFor="serialNo">Serial Number</label>
@@ -44,6 +43,79 @@
                                 formControlName="specs"
                             />
                         </div>
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="brand">Brand</label>
+                            <input
+                                type="text"
+                                id="brand"
+                                pInputText
+                                placeholder="brand"
+                                model
+                                formControlName="brand"
+                            />
+                        </div>
+                    </div>
+                    <div class="grid formgrid mt-5">
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="model">Model</label>
+                            <input
+                                type="text"
+                                id="model"
+                                pInputText
+                                placeholder="model"
+                                formControlName="model"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="ram">RAM</label>
+                            <input
+                                type="text"
+                                id="ram"
+                                pInputText
+                                placeholder="ram"
+                                formControlName="ram"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="storage">Storage</label>
+                            <input
+                                type="text"
+                                id="storage"
+                                pInputText
+                                placeholder="storage"
+                                formControlName="storage"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="gpu">GPU</label>
+                            <input
+                                type="text"
+                                id="gpu"
+                                pInputText
+                                placeholder="gpu"
+                                formControlName="gpu"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="size">Size</label>
+                            <input
+                                type="text"
+                                id="size"
+                                pInputText
+                                placeholder="size"
+                                formControlName="size"
+                            />
+                        </div>
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="color">Color</label>
+                            <input
+                                type="text"
+                                id="color"
+                                pInputText
+                                placeholder="color"
+                                formControlName="color"
+                            />
+                        </div>
                     </div>
                     <div class="grid formgrid mt-5">
                         <div class="col-6 mb-2 lg:col-2 lg:mb-0">
@@ -60,7 +132,14 @@
                                 formControlName="dateAcquired"
                             ></p-calendar>
                         </div>
-                        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                        <div class="col-12 mb-2 lg:col-2 lg:mb-0">
+                            <label htmlFor="warranty">Warranty</label>
+                            <p-calendar
+                                [showIcon]="true"
+                                formControlName="warranty"
+                            ></p-calendar>
+                        </div>
+                        <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                             <label htmlFor="vendor">Vendor</label>
                             <input
                                 type="text"
@@ -70,13 +149,7 @@
                                 formControlName="vendor"
                             />
                         </div>
-                        <div class="col-12 mb-2 lg:col-3 lg:mb-0">
-                            <label htmlFor="warranty">Warranty</label>
-                            <p-calendar
-                            [showIcon]="true"
-                            formControlName="warranty"
-                        ></p-calendar>
-                        </div>
+
                     </div>
                 </div>
                 <div class="grid formgrid mt-5">
@@ -85,16 +158,13 @@
                         <p-dropdown
                             formControlName="company"
                             [options]="companyCodes"
-
                         ></p-dropdown>
                     </div>
-
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                         <label htmlFor="department">Department</label>
                         <p-dropdown
                             formControlName="department"
                             [options]="departmentCodes"
-
                         ></p-dropdown>
                     </div>
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
@@ -105,21 +175,22 @@
                             type="text"
                             id="accountability"
                             pInputText
-                            placeholder="Accountability Number"
+
                             formControlName="accountabilityNo"
+                            [ngStyle]="{ 'font-weight': 'bold' }"
                         />
                     </div>
 
                     <div class="col-12 mb-2 lg:col-3 lg:mb-0">
                         <label htmlFor="user">Current User</label>
                         <p-autoComplete
-                        formControlName="currentUser"
-                        [dropdown]="true"
-                        [suggestions]="filteredUsers"
-                        (completeMethod)="filterUsers($event)"
-                        field="fullName"
-                        (onSelect)="onUserSelect($event)"
-                      ></p-autoComplete>
+                            formControlName="currentUser"
+                            [dropdown]="true"
+                            [suggestions]="filteredUsers"
+                            (completeMethod)="filterUsers($event)"
+                            field="fullName"
+                            (onSelect)="onUserSelect($event)"
+                        ></p-autoComplete>
                     </div>
                 </div>
 
@@ -139,11 +210,7 @@
 
                 <div class="grid formgrid mt-5 flex justify-content-end">
                     <div class="col-12 mb-2 lg:col-1 lg:mb-0">
-                        <button
-                            pButton
-                            type="submit"
-                            label="Submit"
-                        ></button>
+                        <button pButton type="submit" label="Submit"></button>
                     </div>
                 </div>
             </form>

@@ -36,6 +36,7 @@ export class AssetService {
     addAsset(data: AssetAssignedDTO): Observable<AssetAssignedDTO[]> {
         return this._http.post<AssetAssignedDTO[]>('/api/AssetAssigned', data);
     }
+
     getAsset(): Observable<AssetInventoryDTO[]> {
         return this._http.get<AssetInventoryDTO[]>(
             '/api/api/AssetAssignedTABLE'

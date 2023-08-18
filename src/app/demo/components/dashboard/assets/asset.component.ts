@@ -1,14 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { catchError, of } from 'rxjs';
 import { Customer, Representative } from 'src/app/demo/api/customer';
-import { Product } from 'src/app/demo/api/product';
 import { CustomerService } from 'src/app/demo/service/customer.service';
+import { Employee } from 'src/app/models/employee.model';
 import { AssetAssignedDTO, AssetAssignedDTOView,  } from 'src/app/models/uploading.model';
 import { AssetService } from 'src/app/services/asset.service';
+
+
+interface AutoCompleteCompleteEvent {
+    originalEvent: Event;
+    query: string;
+}
 
 @Component({
     templateUrl: './asset.component.html',
@@ -31,6 +38,7 @@ export class AssetComponent implements OnInit {
     download_asset: boolean = false;
 
     items: MenuItem[] | undefined;
+    user_action:  MenuItem[] | undefined;
 
     serialNumbers = [];
 
@@ -43,13 +51,14 @@ export class AssetComponent implements OnInit {
     visible: boolean = false;
     edit: boolean = false;
     delete: boolean = false;
+    change_user: boolean = false;
     dt: any;
 
     constructor(
         private assetService: AssetService,
-        private _http: HttpClient,
         private formBuilder: FormBuilder,
-        private customerService: CustomerService
+        private messageService: MessageService
+
     ) {
         this.uploadForm = this.formBuilder.group({
             fileInput: ['', Validators.required],
@@ -65,6 +74,15 @@ export class AssetComponent implements OnInit {
             { label: 'Others', icon: 'pi pi-fw pi-twitter' },
         ];
 
+        this.user_action = [
+            {
+                label: 'Change', icon: 'pi pi-fw pi-user-edit'
+            },
+            {
+                label: 'Remove'
+            }
+        ]
+
         this.action = [
             {
                 label: 'Update',
@@ -79,6 +97,7 @@ export class AssetComponent implements OnInit {
         this.serialNumber();
 
         this.getAssets();
+        this.getUsers();
     }
 
     clear(table: Table) {
@@ -155,13 +174,20 @@ export class AssetComponent implements OnInit {
     }
 
     assets: AssetAssignedDTO[] = [];
-    asset: AssetAssignedDTOView
+    asset: any
 
     getAssets() {
         this.assetService.getAsset().subscribe((data: any) => {
-            this.assets = data;
+            this.assets = data.map((asset: any) => ({
+                ...asset,
+                company: asset.company.toUpperCase(),
+                remarks: asset.remarks.toUpperCase(),
+                department: asset.department.toUpperCase(),
+                accountabilityNo: asset.accountabilityNo.toUpperCase(),
+                // Add similar lines for other properties that need to be in uppercase
+            }));
+            this.loading = false;
         });
-        this.loading = false;
     }
 
     editProduct(asset: AssetAssignedDTO) {
@@ -195,6 +221,65 @@ export class AssetComponent implements OnInit {
             }, 'assets', 'custom');
         }
     }
+
+
+
+
+    users: Employee[] = [];
+    filteredUsers: any[] | undefined;
+    selectedUser: any;
+
+    getUsers(){
+        this.assetService.getUsers().subscribe(
+            (users: Employee[]) => {
+                this.users = users;
+            },
+            (error) => {
+                console.error('Error fetching employees:', error);
+            }
+        );
+    }
+
+    filterUsers(event: AutoCompleteCompleteEvent) {
+
+        let filtered: Employee[] = [];
+        let query = event.query;
+
+        if (this.users) {
+            filtered = this.users.filter((user) => {
+                return user.fullName
+                    .toLowerCase()
+                    .includes(query.toLowerCase());
+            });
+        }
+
+        this.filteredUsers = filtered;
+    }
+
+
+    changeUser(){
+        this.change_user = true;
+    }
+
+    onUserSelect(event: any) { // Replace `any` with the appropriate type
+        this.selectedUser = event; // Update selectedUser with the selected value
+    }
+
+    clearSelectedUser() {
+        this.selectedUser = "No User";
+    }
+
+    change(){
+        this.change_user = false;
+    }
+
+    updateAsset(){
+        this.edit = false;
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'hihiihihi' });
+    }
+
+
+
 
 
 }

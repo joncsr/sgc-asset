@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <p-tabMenu [model]="items"></p-tabMenu>
 <br />
 
@@ -78,21 +79,20 @@
                     <div class="flex align-items-center">Barcode</div>
                 </th>
                 <th style="min-width: 10rem">
-                    <div class="flex align-items-center">Unit Type</div>
+                    <div class="flex align-items-center">Type</div>
                 </th>
                 <th style="min-width: 10rem">
-                    <div class="flex align-items-center">Specification
+                    <div class="flex align-items-center">
+                        Specification
                         <p-columnFilter
-                        type="text"
-                        field="assetInventoryDTO.specs"
-                        display="menu"
-                    ></p-columnFilter>
+                            type="text"
+                            field="assetInventoryDTO.specs"
+                            display="menu"
+                        ></p-columnFilter>
                     </div>
                 </th>
                 <th style="width: 15rem">
-                    <div class="flex align-items-center">
-                        Availability
-                    </div>
+                    <div class="flex align-items-center">Availability</div>
                 </th>
                 <th style="min-width: 5rem">
                     <div class="flex align-items-end">Action</div>
@@ -134,19 +134,13 @@
                 </td>
                 <td>
                     <div class="flex">
+
                         <button
                             pButton
                             pRipple
                             icon="pi pi-pencil"
                             class="p-button-rounded p-button-success mr-2"
                             (click)="editProduct(asset)"
-                        ></button>
-                        <button
-                            pButton
-                            pRipple
-                            icon="pi pi-trash"
-                            class="p-button-rounded p-button-warning"
-                            (click)="deleteProduct(asset)"
                         ></button>
                     </div>
                 </td>
@@ -231,21 +225,242 @@
     [style]="{ width: '50vw' }"
     [draggable]="false"
     [resizable]="false"
+    [maximizable]="true"
 >
-    <p *ngIf="asset">
-        <img
-            src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
-            alt=""
-            width="80px"
-            height="80px"
-        />
-        {{ asset?.assetInventoryDTO?.barcode }}
-        {{ asset?.company }}
-        {{ asset?.department }}
-        {{ asset?.employeeDTO?.firstname }}
-    </p>
-    this is edit modal
+    <div *ngIf="asset" class="">
+        <div class="grid">
+            <div class="col-12 lg:col-6 xl:col-5">
+                <div class="card shadow-4 mb-0">
+                    <div class="flex justify-content-center mb-3">
+                        <p-image
+                            src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
+                            alt="Image"
+                            width="250"
+                            [preview]="true"
+                        ></p-image>
+                    </div>
+                    <span class="text-black-800 font-semibold">
+                        <strong> {{ asset.assetInventoryDTO.specs }} </strong> -
+                        {{ asset.assetInventoryDTO.unit }}
+                    </span>
+                    <div class="mt-2">
+                        <span>
+                            BARCODE
+                            <p class="text-black-800 font-semibold">
+                                <strong>
+                                    {{ asset.assetInventoryDTO.barcode }}
+                                </strong>
+                            </p></span
+                        >
+                    </div>
+                    <div class="mt-2">
+                        <span>
+                            SERIAL NUMBER
+                            <p class="text-black-800 font-semibold">
+                                <strong>
+                                    {{ asset.assetInventoryDTO.serialNo }}
+                                </strong>
+                            </p></span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 lg:col-6 xl:col-4">
+                <div class="mt-5">
+                    <span>
+                        <strong>{{
+                            selectedUser
+                                ? selectedUser.fullName
+                                : asset.employeeDTO?.fullName === null
+                                ? "No User"
+                                : asset.employeeDTO?.fullName
+                        }}</strong>
+                        <div>
+                            <p>
+                                <button (click)="changeUser(asset)">
+                                    Assign New
+                                </button>
+                                <button (click)="clearSelectedUser()">Remove</button>
+                            </p>
+                        </div>
+                    </span>
+                    <p-dialog
+                        header="Assign New User"
+                        [(visible)]="change_user"
+                        [modal]="true"
+                        [style]="{ width: '30vw', height: '300px' }"
+                        [draggable]="false"
+                        [resizable]="false"
+                    >
+                        <div class="grid formgrid mt-5">
+                            <div
+                                class="col-12 mb-2 lg:col-12 lg:mb-0 flex justify-content-center w-full"
+                            >
+                                <p-autoComplete
+                                    [dropdown]="true"
+                                    [suggestions]="filteredUsers"
+                                    (completeMethod)="filterUsers($event)"
+                                    field="fullName"
+                                    (onSelect)="onUserSelect($event)"
+                                ></p-autoComplete>
+                            </div>
+                            <div
+                                class="col-12 mb-2 lg:col-12 lg:mb-0 flex justify-content-center w-full mt-5"
+                            >
+                                <p>
+                                    <strong>{{
+                                        selectedUser
+                                            ? selectedUser.fullName
+                                            : "None"
+                                    }}</strong>
+                                </p>
+                            </div>
+                        </div>
+                        <ng-template pTemplate="footer">
+                            <p-button
+                                icon="pi pi-check"
+                                (click)="change()"
+                                label="Ok"
+                                styleClass="p-button-text"
+                            ></p-button>
+                        </ng-template>
+                    </p-dialog>
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        ACCOUNTABILITY NUMBER
+                        <p class="text-black-800 font-medium">
+                            <strong>
+                                {{ asset.accountabilityNo }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <div class="flex flex-column gap-2">
+                        <label htmlFor="company">Company</label>
+                        <p-dropdown [options]="companyCodes"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <div class="flex flex-column gap-2">
+                        <label htmlFor="company">Department</label>
+                        <p-dropdown [options]="companyCodes"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        REMARKS
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.remarks }}
+                            </strong>UsereditProduct
+                        </p></span
+                    >
+                </div>
+            </div>
+            <div class="col-12 lg:col-6 xl:col-3">
+                <div class="mt-5">
+                    <span>
+                        VENDOR
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{
+                                    asset.assetInventoryDTO.vendor.toUpperCase()
+                                }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        WARRANTY
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.assetInventoryDTO.warranty }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        DATE PO
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.assetInventoryDTO.datePO | date }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        DATE ACQUIRED
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{
+                                    asset.assetInventoryDTO.dateAcquired ===
+                                    null
+                                        ? "Empty Field".toUpperCase()
+                                        : (asset.assetInventoryDTO.dateAcquired
+                                          | date)
+                                }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+            </div>
+        </div>
+        <p-accordion>
+            <p-accordionTab header="Components">
+                <div class="col-12 lg:col-12 xl:col-12">
+                    <div class="flex justify-content-center">
+                        <p-table [tableStyle]="{ 'min-width': '63rem' }">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body">
+                                <tr>
+                                    <td>dasdsa</td>
+                                    <td>dasdas</td>
+                                    <td>dasdas</td>
+                                    <td>dasdd</td>
+                                    <td>dasdd</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
+        <p-accordion [activeIndex]="0">
+            <p-accordionTab header="History"> Pas user info </p-accordionTab>
+        </p-accordion>
+    </div>
+    <ng-template pTemplate="footer">
+
+        <p-button
+            icon="pi pi-update"
+            (click)="updateAsset()"
+            label="Update"
+            styleClass="p-button-text"
+        ></p-button>
+    </ng-template>
 </p-dialog>
+
 <p-dialog
     header="Delete"
     [(visible)]="delete"
@@ -275,78 +490,181 @@
     <div *ngIf="asset" class="">
         <div class="grid">
             <div class="col-12 lg:col-6 xl:col-5">
-                <div class="card mb-0">
+                <div class="card shadow-4 mb-0">
                     <div class="flex justify-content-between mb-3">
                         <p-image
-                        src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
+                            src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
                             alt="Image"
-                            width="300"
+                            width="250"
                             [preview]="true"
                         ></p-image>
                     </div>
-                    <span class="text-green-500 font-medium">{{
-                        asset.assetInventoryDTO.barcode
-                    }}</span>
-                    <p>{{ asset.assetInventoryDTO.unit }}</p>
-                    <p class="text-red-500 font-medium">
-                        {{ asset.assetInventoryDTO.serialNo }}
-                    </p>
+                    <span class="text-black-800 font-semibold">
+                        <strong> {{ asset.assetInventoryDTO.specs }} </strong> -
+                        {{ asset.assetInventoryDTO.unit }}
+                    </span>
+                    <div class="mt-2">
+                        <span>
+                            BARCODE
+                            <p class="text-black-800 font-semibold">
+                                <strong>
+                                    {{ asset.assetInventoryDTO.barcode }}
+                                </strong>
+                            </p></span
+                        >
+                    </div>
+                    <div class="mt-2">
+                        <span>
+                            SERIAL NUMBER
+                            <p class="text-black-800 font-semibold">
+                                <strong>
+                                    {{ asset.assetInventoryDTO.serialNo }}
+                                </strong>
+                            </p></span
+                        >
+                    </div>
                 </div>
             </div>
+
             <div class="col-12 lg:col-6 xl:col-3">
-                <span class="text-green-500 font-medium">
-                    <u>{{ asset.assetInventoryDTO.specs }}</u>
-                </span>
-                <p>Specification</p>
-                <span class="text-green-500 font-medium"
-                    ><u>{{ asset.accountabilityNo }}</u></span
-                >
-                <p>Accountability Number</p>
-                <span class="text-green-500 font-medium"
-                    ><u>{{ asset.company }}</u></span
-                >
-                <p>Company</p>
-                <span class="text-green-500 font-medium"
-                    ><u>{{ asset.department }}</u></span
-                >
-                <p>Department</p>
-                <span class="text-red-600 font-medium">{{
-                    asset.remarks
-                }}</span>
-                <p>Remarks</p>
+                <div class="mt-5">
+                    <span>
+                        CURRENT USER
+                        <p class="text-black-500 font-semibold text-xl">
+                            <strong>
+                                {{
+                                    asset.isAvailable === false
+                                        ? asset.employeeDTO?.fullName
+                                        : "No User"
+                                }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        ACCOUNTABILITY NUMBER
+                        <p class="text-black-800 font-medium">
+                            <strong>
+                                {{ asset.accountabilityNo }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        COMPANY
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.company }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-2">
+                    <span>
+                        DEPARTMENT
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.department }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        REMARKS
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.remarks }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
             </div>
             <div class="col-12 lg:col-6 xl:col-4">
-                <span class="text-green-500 font-medium">
-                    <u>{{ asset.assetInventoryDTO.vendor }}</u>
-                </span>
-                <p>Vendor</p>
-                <span class="text-green-500 font-medium">
-                    <u>{{ asset.assetInventoryDTO.warranty }}</u>
-                </span>
-                <p>Warranty</p>
-                <span class="text-green-500 font-medium">
-                    <u>{{ asset.assetInventoryDTO.datePO | date }}</u>
-                </span>
-                <p>Date PO</p>
-                <span class="text-green-500 font-medium">
-                    <u>{{
-                        asset.assetInventoryDTO.dateAcquired === null
-                            ? "Empty Field"
-                            : asset.assetInventoryDTO.dateAcquired
-                    }}</u>
-                </span>
-                <p>Date Acquired</p>
-                <span class="font-medium">
-                    <p-tag
-                        icon="pi pi-user"
-                        value="{{ asset.isAvailable === false ? asset.employeeDTO?.fullName : 'No User' }}"
+                <div class="mt-5">
+                    <span>
+                        VENDOR
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.assetInventoryDTO.vendor }}
+                            </strong>
+                        </p></span
                     >
-                        <p></p>
-                    </p-tag>
-                </span>
-                <p class="font-medium">Current User</p>
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        WARRANTY
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.assetInventoryDTO.warranty }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        DATE PO
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ asset.assetInventoryDTO.datePO | date }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        DATE ACQUIRED
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{
+                                    asset.assetInventoryDTO.dateAcquired ===
+                                    null
+                                        ? "Empty Field"
+                                        : asset.assetInventoryDTO.dateAcquired
+                                }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
             </div>
         </div>
+        <p-accordion [activeIndex]="0">
+            <p-accordionTab header="Components">
+                <div class="col-12 lg:col-12 xl:col-12">
+                    <div class="flex justify-content-center">
+                        <p-table [tableStyle]="{ 'min-width': '63rem' }">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body">
+                                <tr>
+                                    <td>dasdsa</td>
+                                    <td>dasdas</td>
+                                    <td>dasdas</td>
+                                    <td>dasdd</td>
+                                    <td>dasdd</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
         <p-accordion [activeIndex]="0">
             <p-accordionTab header="History"> Pas user info </p-accordionTab>
         </p-accordion>

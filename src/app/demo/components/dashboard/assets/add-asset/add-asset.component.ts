@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SelectItem } from 'primeng/api';
+import { MessageService, SelectItem } from 'primeng/api';
 import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { Customer, Representative } from 'src/app/demo/api/customer';
@@ -31,12 +31,12 @@ export class AddAssetComponent implements OnInit {
 
     assetForm: FormGroup;
 
-
     constructor(
         private countryService: CountryService,
         private formBuilder: FormBuilder,
         private assetService: AssetService,
-        private dropdownService: DropdownService
+        private dropdownService: DropdownService,
+        private messageService: MessageService
     ) {}
 
     ngOnInit(): void {
@@ -50,6 +50,7 @@ export class AddAssetComponent implements OnInit {
     }
 
     initForm() {
+        const accountabilityNo = this.generateAccountabilityNumber();
         this.assetForm = this.formBuilder.group({
             assetInventoryDTO: this.formBuilder.group({
                 barcode: [
@@ -62,12 +63,19 @@ export class AddAssetComponent implements OnInit {
                 vendor: ['', Validators.required],
                 warranty: ['', Validators.required],
                 datePO: ['', Validators.required],
+                brand: ['', Validators.required],
                 dateAcquired: ['', Validators.required],
+                model: ['', Validators.required],
+                ram: ['', Validators.required],
+                storage: ['', Validators.required],
+                gpu: ['', Validators.required],
+                size: ['', Validators.required],
+                color: ['', Validators.required],
             }),
 
             company: ['', Validators.required],
             department: [''],
-            accountabilityNo: ['', Validators.required],
+            accountabilityNo: [accountabilityNo, Validators.required],
             currentUser: [''],
             empId: [this.selectedUserId],
             remarks: ['', Validators.required],
@@ -101,6 +109,24 @@ export class AddAssetComponent implements OnInit {
         return result;
     }
 
+    generateAccountabilityNumber(): string {
+        const currentYear = new Date().getFullYear();
+        const sequentialNumber = this.getSequentialNumber(); // Implement this function to get the next sequential number
+        return `ARCP#${currentYear}-${sequentialNumber
+            .toString()
+            .padStart(5, '0')}`;
+    }
+
+    // You need to implement this function to get the next sequential number from your backend
+    getSequentialNumber(): number {
+        // You can generate a random sequential number between 5000 and 1 million
+        const minNumber = 1;
+        const maxNumber = 100000;
+        return (
+            Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber
+        );
+    }
+
     filterCountry(event: AutoCompleteCompleteEvent) {
         let filtered: any[] = [];
         let query = event.query;
@@ -130,8 +156,6 @@ export class AddAssetComponent implements OnInit {
 
     users: Employee[] = [];
 
-
-
     filteredUsers: any[] | undefined;
 
     getEmployee() {
@@ -144,25 +168,34 @@ export class AddAssetComponent implements OnInit {
             }
         );
     }
+
     filterUsers(event: AutoCompleteCompleteEvent) {
         let filtered: Employee[] = [];
         let query = event.query;
 
         if (this.users) {
-          filtered = this.users.filter((user) => {
-            return user.fullName.toLowerCase().includes(query.toLowerCase());
-          });
+            filtered = this.users.filter((user) => {
+                return user.fullName
+                    .toLowerCase()
+                    .includes(query.toLowerCase());
+            });
         }
 
         this.filteredUsers = filtered;
-      }
+    }
 
     onFormSubmit() {
         if (this.assetForm.valid) {
             this.assetService.addAsset(this.assetForm.value).subscribe({
                 next: (val: any) => {
-                    alert('Asset Added');
-                    window.location.reload();
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Asset Added',
+                    });
+                    // Clear the form
+                    this.assetForm.reset();
+                    window.location.reload()
                 },
                 error: (err: any) => {
                     console.error('API error:', err);
@@ -188,7 +221,7 @@ export class AddAssetComponent implements OnInit {
     }
 
     companyCodes: string[] = [];
-    getCompanyCodes(){
+    getCompanyCodes() {
         this.dropdownService.getCompanyCodes().subscribe(
             (companyCodes: string[]) => {
                 this.companyCodes = companyCodes;
@@ -200,7 +233,7 @@ export class AddAssetComponent implements OnInit {
     }
 
     unitTypes: string[] = [];
-    getUnitTypes(){
+    getUnitTypes() {
         this.dropdownService.getUnitTypes().subscribe(
             (unitTypes: string[]) => {
                 this.unitTypes = unitTypes;
@@ -211,28 +244,22 @@ export class AddAssetComponent implements OnInit {
         );
     }
 
-
-
-
-
     selectedUserId: number | null = null;
 
     setupCurrentUserListener() {
-        this.assetForm.get('currentUser').valueChanges.subscribe((selectedUser) => {
-          // Assuming your currentUser object has a property named empId
-          const empId = selectedUser?.id || '' ;
-          this.assetForm.get('empId').setValue(empId); // Update the empId field value
-        });
-      }
+        this.assetForm
+            .get('currentUser')
+            .valueChanges.subscribe((selectedUser) => {
+                // Assuming your currentUser object has a property named empId
+                const empId = selectedUser?.id || null;
+                this.assetForm.get('empId').setValue(empId); // Update the empId field value
+            });
+    }
 
-      onUserSelect(selectedUser: Employee) {
+    onUserSelect(selectedUser: Employee) {
         this.selectedUserId = selectedUser.id;
         this.assetForm.patchValue({
-          empId: this.selectedUserId
+            empId: this.selectedUserId,
         });
-      }
-
-
-
-
+    }
 }
