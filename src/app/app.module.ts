@@ -11,20 +11,28 @@ import { EventService } from './demo/service/event.service';
 import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { Token } from '@angular/compiler';
+import { TokenInterceptorService } from './services/token-interceptor.service';
 
 @NgModule({
-    declarations: [
-        AppComponent, NotfoundComponent
-    ],
-    imports: [
-        AppRoutingModule,
-        AppLayoutModule
-    ],
+    declarations: [AppComponent, NotfoundComponent],
+    imports: [AppRoutingModule, AppLayoutModule, HttpClientModule],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
-        CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        CountryService,
+        CustomerService,
+        EventService,
+        IconService,
+        NodeService,
+        PhotoService,
+        ProductService,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptorService,
+            multi: true,
+        },
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
