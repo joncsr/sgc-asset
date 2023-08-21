@@ -10,7 +10,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { DashboardsRoutingModule } from './dashboard-routing.module';
 import { FileUploadModule } from 'primeng/fileupload';
-import { FileDemoRoutingModule } from '../uikit/file/filedemo-routing.module';
+
 import { AssetTableComponent } from './asset-table/asset-table.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
@@ -32,11 +32,7 @@ import { StepsModule } from 'primeng/steps';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { RouterModule } from '@angular/router';
-import { ConfirmationComponent } from '../uikit/menus/confirmation.component';
-import { MenusComponent } from '../uikit/menus/menus.component';
-import { PaymentComponent } from '../uikit/menus/payment.component';
-import { PersonalComponent } from '../uikit/menus/personal.component';
-import { SeatComponent } from '../uikit/menus/seat.component';
+
 import { AssetComponent } from './assets/asset.component';
 import { RequestComponent } from './request/request.component';
 import { AvatarGroupModule } from 'primeng/avatargroup';
@@ -131,7 +127,7 @@ import { MessageService } from 'primeng/api';
                         component: ComponentStorageComponent,
                     },
                     { path: 'request', component: RequestComponent },
-                    { path: 'seat', component: SeatComponent },
+
                     { path: 'asset_user', component: AssetUserComponent },
                 ],
             },

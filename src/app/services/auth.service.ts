@@ -17,12 +17,17 @@ export class AuthService  {
 
   }
 
-  loginUser(username: string, password: string): Observable<any> {
-    const loginData = {
-      username: username,
-      password: password
-    };
-    return this._http.post<any>('/api/Login/login', loginData);
+  login(usercred: any): Observable<any> {
+
+    return this._http.post<any>('/api/Login/login', usercred);
+  }
+
+  isLoggedIn(){
+    return localStorage.getItem('token')!=null;
+  }
+
+  getToken(){
+    return localStorage.getItem('token')||'';
   }
 
   logout()  {
