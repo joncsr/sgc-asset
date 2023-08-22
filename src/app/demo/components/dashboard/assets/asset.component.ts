@@ -1,6 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators,
+} from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
@@ -8,9 +13,12 @@ import { catchError, of } from 'rxjs';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CustomerService } from 'src/app/demo/service/customer.service';
 import { Employee } from 'src/app/models/employee.model';
-import { AssetAssignedDTO, AssetAssignedDTOView,  } from 'src/app/models/uploading.model';
+import {
+    AssetAssignedDTO,
+    AssetAssignedDTOView,
+} from 'src/app/models/uploading.model';
 import { AssetService } from 'src/app/services/asset.service';
-
+import { DropdownService } from 'src/app/services/dropdowns.service';
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;
@@ -34,35 +42,49 @@ export class AssetComponent implements OnInit {
     display: boolean = false;
 
     add_asset: boolean = false;
+
     upload_asset: boolean = false;
+
     download_asset: boolean = false;
 
     items: MenuItem[] | undefined;
-    user_action:  MenuItem[] | undefined;
+
+    user_action: MenuItem[] | undefined;
 
     serialNumbers = [];
 
     uploadForm: FormGroup;
+    editImageForm: FormGroup;
+
     Data: any;
+
     fileContent: string;
 
     action: MenuItem[] | undefined;
 
     visible: boolean = false;
+
     edit: boolean = false;
+
     delete: boolean = false;
+
     change_user: boolean = false;
+
     dt: any;
 
     constructor(
         private assetService: AssetService,
         private formBuilder: FormBuilder,
-        private messageService: MessageService
-
+        private messageService: MessageService,
+        private dropdownService: DropdownService
     ) {
         this.uploadForm = this.formBuilder.group({
             fileInput: ['', Validators.required],
         });
+
+        this.editImageForm = this.formBuilder.group({
+            imagePath: ['', Validators.required]
+        })
     }
 
     ngOnInit() {
@@ -76,12 +98,13 @@ export class AssetComponent implements OnInit {
 
         this.user_action = [
             {
-                label: 'Change', icon: 'pi pi-fw pi-user-edit'
+                label: 'Change',
+                icon: 'pi pi-fw pi-user-edit',
             },
             {
-                label: 'Remove'
-            }
-        ]
+                label: 'Remove',
+            },
+        ];
 
         this.action = [
             {
@@ -98,6 +121,8 @@ export class AssetComponent implements OnInit {
 
         this.getAssets();
         this.getUsers();
+        this.getCompanyCodes();
+        this.getDepartmentCodes();
     }
 
     clear(table: Table) {
@@ -173,8 +198,40 @@ export class AssetComponent implements OnInit {
         }
     }
 
-    assets: AssetAssignedDTO[] = [];
-    asset: any
+    imageFile: string;
+    selectedImage: File | null = null;
+
+    onAssetImageUpload() {
+        if (this.editImageForm.valid && this.selectedImage) {
+            const assetId = this.asset.id;
+
+            const formData = new FormData();
+            formData.append('imagePath', this.selectedImage);
+
+            this.assetService.updateAssetImage(assetId, formData).subscribe({
+                next: (val: any) => {
+                    // Handle success
+                },
+                error: (err: any) => {
+                    console.error('API error:', err);
+                }
+            });
+        }
+    }
+
+    onImageSelected(event: any) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            this.selectedImage = files[0];
+            console.log('Selected Image:', this.selectedImage);
+        }
+    }
+
+
+
+    assets: AssetAssignedDTO;
+    asset: any;
+    selectedUserFullName: string = '';
 
     getAssets() {
         this.assetService.getAsset().subscribe((data: any) => {
@@ -184,11 +241,13 @@ export class AssetComponent implements OnInit {
                 remarks: asset.remarks.toUpperCase(),
                 department: asset.department.toUpperCase(),
                 accountabilityNo: asset.accountabilityNo.toUpperCase(),
+                imagePath: asset.imagePath,
                 // Add similar lines for other properties that need to be in uppercase
             }));
             this.loading = false;
         });
     }
+
 
     editProduct(asset: AssetAssignedDTO) {
         this.asset = asset;
@@ -210,26 +269,33 @@ export class AssetComponent implements OnInit {
             // No filters selected, reset the filter
             this.dt.filter(null, 'assets', 'in');
         } else {
-            this.dt.filter((value: AssetAssignedDTO) => {
-                if (filterValue.includes('false') && value.isAvailable === false) {
-                    return true;
-                }
-                if (filterValue.includes('true') && value.isAvailable === true) {
-                    return true;
-                }
-                return false;
-            }, 'assets', 'custom');
+            this.dt.filter(
+                (value: AssetAssignedDTO) => {
+                    if (
+                        filterValue.includes('false') &&
+                        value.isAvailable === false
+                    ) {
+                        return true;
+                    }
+                    if (
+                        filterValue.includes('true') &&
+                        value.isAvailable === true
+                    ) {
+                        return true;
+                    }
+                    return false;
+                },
+                'assets',
+                'custom'
+            );
         }
     }
-
-
-
 
     users: Employee[] = [];
     filteredUsers: any[] | undefined;
     selectedUser: any;
 
-    getUsers(){
+    getUsers() {
         this.assetService.getUsers().subscribe(
             (users: Employee[]) => {
                 this.users = users;
@@ -241,7 +307,6 @@ export class AssetComponent implements OnInit {
     }
 
     filterUsers(event: AutoCompleteCompleteEvent) {
-
         let filtered: Employee[] = [];
         let query = event.query;
 
@@ -256,30 +321,79 @@ export class AssetComponent implements OnInit {
         this.filteredUsers = filtered;
     }
 
-
-    changeUser(){
+    changeUser() {
         this.change_user = true;
     }
 
-    onUserSelect(event: any) { // Replace `any` with the appropriate type
+    onUserSelect(event: any) {
+        // Replace `any` with the appropriate type
         this.selectedUser = event; // Update selectedUser with the selected value
     }
 
     clearSelectedUser() {
-        this.selectedUser = "No User";
+        this.selectedUser = 'No User';
     }
 
-    change(){
+    change() {
         this.change_user = false;
     }
 
-    updateAsset(){
+    updateAsset() {
         this.edit = false;
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'hihiihihi' });
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'hihiihihi',
+        });
     }
 
+    companyCodes: string[] = [];
+    getCompanyCodes() {
+        this.dropdownService.getCompanyCodes().subscribe(
+            (companyCodes: string[]) => {
+                this.companyCodes = companyCodes;
+            },
+            (error) => {
+                console.error('Error fetching department codes:', error);
+            }
+        );
+    }
 
+    departmentCodes: string[] = [];
+    getDepartmentCodes() {
+        this.assetService.getDepartmentCodes().subscribe(
+            (departmentCodes: string[]) => {
+                this.departmentCodes = departmentCodes;
+            },
+            (error) => {
+                console.error('Error fetching department codes:', error);
+            }
+        );
+    }
 
+    // initUpdateForm(){
+    //     this.updateAssetForm = this.formBuilder.group({
+    //         company: [''],
+    //         department: [''],
+    //         empId: [''],
+    //         remarks: [''],
+    //     })
+    // }
 
+    updateAssetForm = new FormGroup({
+        company: new FormControl(''),
+        department: new FormControl(''),
+        remarks: new FormControl(''),
+        empId: new FormControl(''),
+    });
 
+    updateAssetSubmit() {
+        if (this.updateAssetForm.valid) {
+            if (this.asset.id) {
+                this.assetService
+                    .updateAsset(this.asset.id, this.updateAssetForm.value)
+                    .subscribe();
+            }
+        }
+    }
 }

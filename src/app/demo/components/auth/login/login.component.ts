@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -25,7 +26,8 @@ export class LoginComponent implements OnInit {
     constructor(
         public layoutService: LayoutService,
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private messageService: MessageService
     ) {
         localStorage.clear();
     }
@@ -43,12 +45,12 @@ export class LoginComponent implements OnInit {
                 (result) => {
                     if (result != null) {
                         this.responseData = result;
-                        alert(result.message);
+                        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'hihhi' });
                         localStorage.setItem(
                             'token',
                             this.responseData.jwtToken
                         );
-                        this.router.navigate(['/asset']);
+                        this.router.navigate(['asset']);
                     } else {
                         alert('Wrong User or Pass');
                     }
