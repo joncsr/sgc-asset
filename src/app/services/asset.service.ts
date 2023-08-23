@@ -99,7 +99,6 @@ export class AssetService {
         return this._http.put<any>(`/api/AssetAssigned/${id}`, data);
     }
 
-
     updateAssetImage(assetId: number, formData: FormData) {
         const options = {
             headers: new HttpHeaders({

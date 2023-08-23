@@ -55,6 +55,7 @@ import { DataViewModule, DataViewLayoutOptions } from 'primeng/dataview';
 import { ImageModule } from 'primeng/image';
 import { EditAssetComponent } from './assets/edit-asset/edit-asset.component';
 import { MessageService } from 'primeng/api';
+import { AddComponentComponent } from './component-storage/add-component/add-component.component';
 
 @NgModule({
     imports: [
@@ -141,6 +142,7 @@ import { MessageService } from 'primeng/api';
         RequestComponent,
         ComponentStorageComponent,
         AddAssetComponent,
+        AddComponentComponent,
         AssetUserComponent
     ],
 
