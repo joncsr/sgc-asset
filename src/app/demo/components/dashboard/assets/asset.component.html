@@ -20,7 +20,8 @@
             'assetInventoryDTO.unit',
             'employeeDTO.employeeCode',
             'assetInventoryDTO.specs',
-            'isAvailable'
+            'isAvailable',
+            'unit'
         ]"
     >
         <ng-template pTemplate="caption">
@@ -47,6 +48,13 @@
                         pButton
                         icon="pi pi-download"
                     ></button>
+                </div>
+                <div class="ml-5">
+                    <p-dropdown
+                        [options]="sortOptions"
+                        placeholder="Sort by Availability"
+                        (onChange)="onSortChange($event)"
+                    ></p-dropdown>
                 </div>
 
                 <span class="p-input-icon-left ml-auto">
@@ -109,7 +117,7 @@
                     <img
                         *ngIf="asset.imagePath; else fallbackImage"
                         [src]="asset.imagePath"
-                        alt=""
+                        alt="Image"
                         width="80px"
                         height="80px"
                     />
@@ -157,7 +165,7 @@
                             pRipple
                             icon="pi pi-pencil"
                             class="p-button-rounded p-button-success mr-2"
-                            (click)="editProduct(asset)"
+                            (click)="editAsset(asset)"
                         ></button>
                     </div>
                 </td>
@@ -246,7 +254,7 @@
 >
     <div *ngIf="asset" class="">
         <div class="grid">
-            <div class="col-12 lg:col-6 xl:col-5">
+            <div class="col-12 lg:col-6 xl:col-6">
                 <div class="card shadow-4 mb-0">
                     <div class="flex justify-content-center mb-3">
                         <p-image
@@ -256,19 +264,10 @@
                             [preview]="true"
                         ></p-image>
                     </div>
-                    <form
-                        [formGroup]="editImageForm"
-                        (ngSubmit)="onAssetImageUpload()"
-                    >
-                        <input
-                            type="file"
-                            id="image"
-                            formControlName="imagePath"
-                            (change)="onImageSelected($event)"
-                        />
-
-                        <button type="submit">Upload new image</button>
-                    </form>
+                    <input type="file" (change)="getFile($event)" />
+                    <button type="button" (click)="imageUpload()">
+                        Update
+                    </button>
 
                     <span class="text-black-800 font-semibold">
                         <strong>
@@ -301,7 +300,7 @@
                 </div>
             </div>
 
-            <div class="col-12 lg:col-6 xl:col-4">
+            <div class="col-12 lg:col-6 xl:col-6">
                 <div class="mt-5">
                     <span>
                         ACCOUNTABILITY NUMBER
@@ -312,182 +311,85 @@
                         </p></span
                     >
                 </div>
-                <div class="mt-5">
-                    <span>
-                        <strong>{{
-                            selectedUser
-                                ? selectedUser.fullName
-                                : asset.employeeDTO?.fullName === null
-                                ? "No User"
-                                : asset.employeeDTO?.fullName
-                        }}</strong>
-                    </span>
+                <p>
+                    <button (click)="newUser()">New User</button>
+                    <button (click)="clearSelectedUser()">Remove</button>
+                </p>
+                <form
+                    [formGroup]="updateAssetForm"
+                    (ngSubmit)="updateAssetSubmit()"
+                >
 
-                    <p-dialog
-                        header="Assign New User"
-                        [(visible)]="change_user"
-                        [modal]="true"
-                        [style]="{ width: '30vw', height: '300px' }"
-                        [draggable]="false"
-                        [resizable]="false"
-                    >
-                        <div class="grid formgrid mt-5">
-                            <div
-                                class="col-12 mb-2 lg:col-12 lg:mb-0 flex justify-content-center w-full"
-                            >
-                                <p-autoComplete
-                                    [dropdown]="true"
-                                    [suggestions]="filteredUsers"
-                                    (completeMethod)="filterUsers($event)"
-                                    field="fullName"
-                                    (onSelect)="onUserSelect($event)"
-                                ></p-autoComplete>
-                            </div>
-                            <div
-                                class="col-12 mb-2 lg:col-12 lg:mb-0 flex justify-content-center w-full mt-5"
-                            >
-                                <p>
-                                    <strong>{{
-                                        selectedUser
-                                            ? selectedUser.fullName
-                                            : "None"
-                                    }}</strong>
-                                </p>
-                            </div>
+                    <div class="mt-5">
+                        <div
+                            class="flex flex-column gap-2"
+                            *ngIf="showNewUserAutoComplete"
+                        >
+                            <label htmlFor="user">New User</label>
+                            <p-autoComplete
+                                [dropdown]="true"
+                                [suggestions]="filteredUsers"
+                                (completeMethod)="filterUsers($event)"
+                                field="fullName"
+                                formControlName="currentUser"
+                                (onSelect)="onUserSelect($event)"
+                            ></p-autoComplete>
                         </div>
-                        <ng-template pTemplate="footer">
-                            <p-button
-                                icon="pi pi-check"
-                                (click)="change()"
-                                label="Ok"
-                                styleClass="p-button-text"
-                            ></p-button>
-                        </ng-template>
-                    </p-dialog>
-                </div>
-                <div class="mt-5">
-                    <div class="flex flex-column gap-2">
-                        <label htmlFor="user">User</label>
-                        <input
-                            type="text"
-                            id="user"
-                            pInputText
-                            placeholder="user"
-                            [value]="
+                        <p class="mt-5">
+                            <strong>{{
                                 selectedUser
                                     ? selectedUser.fullName
-                                    : asset.employeeDTO?.fullName || 'No User'
-                            "
-                        />
-                    </div>
-                    <div>
-                        <p>
-                            <button (click)="changeUser(asset)">
-                                Assign New
-                            </button>
-                            <button (click)="clearSelectedUser()">
-                                Remove
-                            </button>
+                                    : asset.employeeDTO?.fullName
+                            }}</strong>
                         </p>
+                        <div></div>
                     </div>
-                </div>
-                <div class="mt-5">
-                    <div class="flex flex-column gap-2">
-                        <label htmlFor="company">Company</label>
-                        <p-dropdown [options]="companyCodes"></p-dropdown>
+                    <div class="mt-5">
+                        <div class="flex flex-column gap-2">
+                            <label htmlFor="company">Company</label>
+                            <p-dropdown
+                                [options]="companyCodes"
+                                formControlName="company"
+                            ></p-dropdown>
+                        </div>
                     </div>
-                </div>
 
-                <div class="mt-2">
-                    <div class="flex flex-column gap-2">
-                        <label htmlFor="department">Department</label>
-                        <p-dropdown [options]="departmentCodes"></p-dropdown>
+                    <div class="mt-2">
+                        <div class="flex flex-column gap-2">
+                            <label htmlFor="department">Department</label>
+                            <p-dropdown
+                                [options]="departmentCodes"
+                                formControlName="department"
+                            ></p-dropdown>
+                        </div>
                     </div>
-                </div>
 
-                <div class="mt-5">
-                    <div class="flex flex-column gap-2">
-                        <label htmlFor="remarks">Remarks</label>
-                        <textarea
-                            rows="5"
-                            id="remarks"
-                            cols="30"
-                            placeholder="Remarks Here"
-                            pInputTextarea
-                        ></textarea>
+                    <div class="mt-5">
+                        <div class="flex flex-column gap-2">
+                            <label htmlFor="remarks">Remarks</label>
+                            <textarea
+                                rows="5"
+                                id="remarks"
+                                cols="30"
+                                placeholder="Remarks Here"
+                                pInputTextarea
+                                formControlName="remarks"
+                                [value]="asset.remarks"
+                            ></textarea>
+                        </div>
                     </div>
-                    <!-- <span>
-                        REMARKS
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.remarks }}
-                            </strong>
-                        </p></span
-                    > -->
-                </div>
+
+                    <div class="flex justify-content-end mb-5 mt-5">
+                        <button
+                            pButton
+                            icon="pi pi-update"
+                            label="Update"
+                            type="submit"
+                            styleClass="p-button-text"
+                        ></button>
+                    </div>
+                </form>
             </div>
-            <div class="col-12 lg:col-6 xl:col-3">
-                <div class="mt-5">
-                    <span>
-                        VENDOR
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{
-                                    asset.assetInventoryDTO.vendor.toUpperCase()
-                                }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        WARRANTY
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.assetInventoryDTO.warranty }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        DATE PO
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.assetInventoryDTO.datePO | date }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        DATE ACQUIRED
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{
-                                    asset.assetInventoryDTO.dateAcquired ===
-                                    null
-                                        ? "Empty Field".toUpperCase()
-                                        : (asset.assetInventoryDTO.dateAcquired
-                                          | date)
-                                }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-            </div>
-        </div>
-        <div class="flex justify-content-end mb-5">
-            <button
-                pButton
-                icon="pi pi-update"
-                (click)="updateAsset()"
-                label="Update"
-                styleClass="p-button-text"
-            ></button>
         </div>
 
         <p-accordion>
@@ -503,24 +405,6 @@
     </div>
 </p-dialog>
 
-<p-dialog
-    header="Delete"
-    [(visible)]="delete"
-    [modal]="true"
-    [style]="{ width: '50vw' }"
-    [draggable]="false"
-    [resizable]="false"
->
-    <p class="m-0">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-    </p>
-</p-dialog>
 <p-dialog
     header="View"
     [(visible)]="visible"
@@ -676,6 +560,16 @@
                             </strong>
                         </p></span
                     >
+                </div>
+                <div class="mt-5">
+                    <a [href]="qrCodeImage" download="qr-code.png">
+                        <img
+                            [src]="qrCodeImage"
+                            alt="QR CODE"
+                            width="120"
+                            height="120"
+                        />
+                    </a>
                 </div>
             </div>
         </div>

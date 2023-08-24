@@ -23,11 +23,11 @@
             <div class="flex">
                 <div>
                     <button
-                        (click)="add_asset = true"
-                        pButton
-                        icon="pi pi-plus"
-                        label="Add"
-                    ></button>
+                    [routerLink]="['/add_component']"
+                    pButton
+                    icon="pi pi-plus"
+                    label="Add"
+                ></button>
                 </div>
                 <div>
                     <button
@@ -167,8 +167,12 @@
             <tr >
                 <td>
 
-                    <i class="pi pi-apple"></i>
-                    <!-- {{ customer.name }} -->
+                    <img
+                    src="https://www.bhphotovideo.com/images/images2500x2500/hp_h2c22aa_abl_hp_x3000_wireless_mouse_1084959.jpg"
+                    alt="Fallback Image"
+                    width="80px"
+                    height="80px"
+                />
                 </td>
                 <td>
 
@@ -182,7 +186,7 @@
                     }}</span>
                 </td>
                 <td>
-                    {{ getRandomSerialNumber() }}
+                   soon
                 </td>
                 <td>
                     {{ customer.balance | currency : "USD" : "symbol" }}
@@ -249,14 +253,6 @@
         (onUpload)="onBasicUpload()"
     ></p-fileUpload>
      </p>
-
-         <!-- <button
-             pButton
-             icon="pi pi-upload"
-             (click)="upload_asset = false"
-             label="Upload"
-             class="p-button-outlined mt-5"
-         ></button> -->
 
 </form>
 
