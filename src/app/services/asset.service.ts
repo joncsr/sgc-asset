@@ -10,6 +10,8 @@ import {
 } from '../models/employee.model';
 import { catchError, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ComponentType } from '../models/dropdowns.model';
+import { ConponentPost } from '../models/component.model';
 
 @Injectable({
     providedIn: 'root',
@@ -68,6 +70,16 @@ export class AssetService {
             );
     }
 
+    getComponentTypes(): Observable<string[]>{
+        return this._http
+            .get<ComponentType[]>('api/api/ComponentTypes')
+            .pipe(
+                map((componentType: ComponentType[]) =>
+                componentType.map((componentType) => componentType.componentType)
+                )
+            );
+    }
+
     // Assuming 'Employee' interface or class is defined for the Employee data model.
     getEmployee(searchQuery: string): Observable<Employee[]> {
         return this._http
@@ -99,7 +111,6 @@ export class AssetService {
         return this._http.put<any>(`/api/AssetAssigned/${id}`, data);
     }
 
-
     updateAssetImage(assetId: number, formData: FormData) {
         const options = {
             headers: new HttpHeaders({
@@ -107,6 +118,10 @@ export class AssetService {
             })
         };
         return this._http.post<any>(`/api/AssetAssigned/${assetId}/upload-image`, formData, options);
+    }
+
+    addAssetComponent(data: ConponentPost): Observable<ConponentPost[]>{
+        return this._http.post<ConponentPost[]>('/api/AssetComponent', data);
     }
 
 

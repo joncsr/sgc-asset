@@ -55,6 +55,9 @@ import { DataViewModule, DataViewLayoutOptions } from 'primeng/dataview';
 import { ImageModule } from 'primeng/image';
 import { EditAssetComponent } from './assets/edit-asset/edit-asset.component';
 import { MessageService } from 'primeng/api';
+import { AddComponentComponent } from './component-storage/add-component/add-component.component';
+import { AssetListComponent } from './component-storage/asset-list/asset-list.component';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 
 @NgModule({
     imports: [
@@ -114,6 +117,8 @@ import { MessageService } from 'primeng/api';
         AccordionModule,
         ImageModule,
 
+        DynamicDialogModule,
+
 
         RouterModule.forChild([
             {
@@ -141,9 +146,11 @@ import { MessageService } from 'primeng/api';
         RequestComponent,
         ComponentStorageComponent,
         AddAssetComponent,
-        AssetUserComponent
+        AddComponentComponent,
+        AssetUserComponent,
+        AssetListComponent
     ],
 
-    providers: [MessageService],
+    providers: [MessageService, DialogService],
 })
 export class DashboardModule {}
