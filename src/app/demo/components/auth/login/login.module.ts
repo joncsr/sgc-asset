@@ -10,6 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
     imports: [
@@ -24,6 +25,7 @@ import { ToastModule } from 'primeng/toast';
         // ToastModule,
         // MessagesModule
     ],
-    declarations: [LoginComponent]
+    declarations: [LoginComponent],
+    providers: [MessageService]
 })
 export class LoginModule { }
