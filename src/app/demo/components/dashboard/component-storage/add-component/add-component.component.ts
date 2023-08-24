@@ -1,84 +1,57 @@
 import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MessageService, SelectItem } from 'primeng/api';
-import { MenuItem } from 'primeng/api/menuitem';
-import { Table } from 'primeng/table';
-import { Customer, Representative } from 'src/app/demo/api/customer';
-import { CountryService } from 'src/app/demo/service/country.service';
-import { CustomerService } from 'src/app/demo/service/customer.service';
-import { Department, Employee } from 'src/app/models/employee.model';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AssetService } from 'src/app/services/asset.service';
-import { FormControl } from '@angular/forms';
-import { DropdownService } from 'src/app/services/dropdowns.service';
-
-interface AutoCompleteCompleteEvent {
-    originalEvent: Event;
-    query: string;
-}
+import { AssetListComponent } from '../asset-list/asset-list.component';
+import { MessageService } from 'primeng/api';
+import { AssetAssignedDTO } from 'src/app/models/uploading.model';
 
 @Component({
     templateUrl: './add-component.component.html',
 })
 export class AddComponentComponent implements OnInit {
-    countries: any[] | undefined;
-
-    filteredCountries: any[] | undefined;
-
-    selectedCountryAdvanced: any[] = [];
-
-    selectedDrop: SelectItem = { value: '' };
-    cities: SelectItem[] = [];
-
-    assetForm: FormGroup;
-
+    ref: DynamicDialogRef;
+    componentForm: FormGroup;
     constructor(
-        private countryService: CountryService,
-        private formBuilder: FormBuilder,
         private assetService: AssetService,
-        private dropdownService: DropdownService,
-        private messageService: MessageService
+        private formBuilder: FormBuilder,
+        public dialogService: DialogService,
+        public messageService: MessageService
     ) {}
 
     ngOnInit(): void {
-        this.initForm();
-        // this.getDepartments();
-        this.getEmployee();
-        this.getDepartmentCodes();
-        this.getCompanyCodes();
-        this.getUnitTypes();
-        this.setupCurrentUserListener();
+        this.componentAddForm();
+        this.getComponentType();
     }
 
-    initForm() {
-        const accountabilityNo = this.generateAccountabilityNumber();
-        this.assetForm = this.formBuilder.group({
-            assetInventoryDTO: this.formBuilder.group({
-                barcode: [
-                    this.generateBarcode(),
-                    [Validators.required, Validators.minLength(6)],
-                ], // Set initial value for barcode and disable it
-                unit: ['', Validators.required],
-                serialNo: ['', Validators.required],
-                specs: ['', Validators.required],
-                vendor: ['', Validators.required],
-                warranty: ['', Validators.required],
-                datePO: ['', Validators.required],
-                brand: ['', Validators.required],
-                dateAcquired: ['', Validators.required],
-                model: ['', Validators.required],
-                ram: ['', Validators.required],
-                storage: ['', Validators.required],
-                gpu: ['', Validators.required],
-                size: ['', Validators.required],
-                color: ['', Validators.required],
-            }),
+    componentTypes: string[] = [];
+    getComponentType() {
+        this.assetService.getComponentTypes().subscribe(
+            (componentTypes: string[]) => {
+                this.componentTypes = componentTypes;
+            },
+            (error) => {
+                console.error('Error fetching department codes:', error);
+            }
+        );
+    }
 
-            company: ['', Validators.required],
-            department: [''],
-            accountabilityNo: [accountabilityNo, Validators.required],
-            currentUser: [''],
-            empId: [this.selectedUserId],
-            remarks: ['', Validators.required],
+    componentAddForm() {
+        this.componentForm = this.formBuilder.group({
+            barcode: [
+                this.generateBarcode(),
+                [Validators.required, Validators.minLength(6)],
+            ],
+            serialNo: [''],
+            componentType: [''],
+            brand: [''],
+            model: [''],
+            specification: [''],
+            vendor: [''],
+            datePO: [''],
+            dateAcquired: [''],
+            asset: [''],
+            assignedID: [''],
         });
     }
 
@@ -109,157 +82,44 @@ export class AddComponentComponent implements OnInit {
         return result;
     }
 
-    generateAccountabilityNumber(): string {
-        const currentYear = new Date().getFullYear();
-        const sequentialNumber = this.getSequentialNumber(); // Implement this function to get the next sequential number
-        return `ARCP#${currentYear}-${sequentialNumber
-            .toString()
-            .padStart(5, '0')}`;
-    }
-
-    // You need to implement this function to get the next sequential number from your backend
-    getSequentialNumber(): number {
-        // You can generate a random sequential number between 5000 and 1 million
-        const minNumber = 1;
-        const maxNumber = 100000;
-        return (
-            Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber
-        );
-    }
-
-    filterCountry(event: AutoCompleteCompleteEvent) {
-        let filtered: any[] = [];
-        let query = event.query;
-
-        for (let i = 0; i < (this.countries as any[]).length; i++) {
-            let country = (this.countries as any[])[i];
-            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                filtered.push(country);
-            }
-        }
-
-        this.filteredCountries = filtered;
-    }
-
-    departments: Department[];
-
-    getDepartments() {
-        this.assetService.getDepartment().subscribe(
-            (departments: Department[]) => {
-                this.departments = departments;
-            },
-            (error) => {
-                console.error('Error fetching departments:', error);
-            }
-        );
-    }
-
-    users: Employee[] = [];
-
-    filteredUsers: any[] | undefined;
-
-    getEmployee() {
-        this.assetService.getUsers().subscribe(
-            (users: Employee[]) => {
-                this.users = users;
-            },
-            (error) => {
-                console.error('Error fetching employees:', error);
-            }
-        );
-    }
-
-    filterUsers(event: AutoCompleteCompleteEvent) {
-        let filtered: Employee[] = [];
-        let query = event.query;
-
-        if (this.users) {
-            filtered = this.users.filter((user) => {
-                return user.fullName
-                    .toLowerCase()
-                    .includes(query.toLowerCase());
-            });
-        }
-
-        this.filteredUsers = filtered;
-    }
-
     onFormSubmit() {
-        if (this.assetForm.valid) {
-            this.assetService.addAsset(this.assetForm.value).subscribe({
-                next: (val: any) => {
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Success',
-                        detail: 'Asset Added',
-                    });
-                    // Clear the form
-                    this.assetForm.reset();
-                    window.location.reload()
-                },
-                error: (err: any) => {
-                    console.error('API error:', err);
-                    // Check for specific error details from the API response
-                    if (err.error && err.error.message) {
-                        console.error('API error message:', err.error.message);
-                    }
-                },
-            });
+        if(this.componentForm.valid){
+            this.assetService.addAssetComponent(this.componentForm.value).subscribe(
+                (response) => {
+                    // Success callback
+                    console.log('Component added successfully:', response);
+                    this.messageService.add({ severity: 'success', summary: 'Asset Selected', detail: 'Added Success' });
+                    this.componentForm.reset();
+                    setTimeout(() => {
+                        window.location.reload();
+                      }, 2000);
+                  },
+            )
         }
     }
 
-    departmentCodes: string[] = [];
-    getDepartmentCodes() {
-        this.assetService.getDepartmentCodes().subscribe(
-            (departmentCodes: string[]) => {
-                this.departmentCodes = departmentCodes;
+    asset: any
+    selectedAsset(){
+        this.asset.assetInventoryId
+    }
+    showAsset() {
+        this.ref = this.dialogService.open(AssetListComponent, {
+            data: {
+                id: '51gF3'
             },
-            (error) => {
-                console.error('Error fetching department codes:', error);
+            header: 'Select Asset',
+            width: '70%',
+            contentStyle: { overflow: 'auto' },
+            baseZIndex: 10000,
+            maximizable: true
+
+        });
+        this.ref.onClose.subscribe((asset: any) => {
+            if (asset) {
+                this.componentForm.patchValue({ assignedID: asset.assetInventoryId });
+                this.componentForm.patchValue({ asset: asset.accountabilityNo });
+                this.messageService.add({ severity: 'info', summary: `Asset Selected: ${asset.assetInventoryId}`, detail: asset.accountabilityNo });
             }
-        );
-    }
-
-    companyCodes: string[] = [];
-    getCompanyCodes() {
-        this.dropdownService.getCompanyCodes().subscribe(
-            (companyCodes: string[]) => {
-                this.companyCodes = companyCodes;
-            },
-            (error) => {
-                console.error('Error fetching department codes:', error);
-            }
-        );
-    }
-
-    unitTypes: string[] = [];
-    getUnitTypes() {
-        this.dropdownService.getUnitTypes().subscribe(
-            (unitTypes: string[]) => {
-                this.unitTypes = unitTypes;
-            },
-            (error) => {
-                console.error('Error fetching department codes:', error);
-            }
-        );
-    }
-
-    selectedUserId: number | null = null;
-
-    setupCurrentUserListener() {
-        this.assetForm
-            .get('currentUser')
-            .valueChanges.subscribe((selectedUser) => {
-                // Assuming your currentUser object has a property named empId
-                const empId = selectedUser?.id || null;
-                this.assetForm.get('empId').setValue(empId); // Update the empId field value
-            });
-    }
-
-    onUserSelect(selectedUser: Employee) {
-        this.selectedUserId = selectedUser.id;
-        this.assetForm.patchValue({
-            empId: this.selectedUserId,
         });
     }
 }

@@ -20,7 +20,8 @@
             'assetInventoryDTO.unit',
             'employeeDTO.employeeCode',
             'assetInventoryDTO.specs',
-            'isAvailable'
+            'isAvailable',
+            'unit'
         ]"
     >
         <ng-template pTemplate="caption">
@@ -50,9 +51,9 @@
                 </div>
                 <div class="ml-5">
                     <p-dropdown
-                        [options]="sorts"
-                        [(ngModel)]="selectedCity"
-                        optionLabel="name"
+                        [options]="sortOptions"
+                        placeholder="Sort by Availability"
+                        (onChange)="onSortChange($event)"
                     ></p-dropdown>
                 </div>
 
@@ -268,20 +269,6 @@
                         Update
                     </button>
 
-                    <!-- <form
-                        [formGroup]="editImageForm"
-                        (ngSubmit)="onAssetImageUpload()"
-                    >
-                        <input
-                            type="file"
-                            id="image"
-                            formControlName="imagePath"
-                            (change)="onImageSelected($event)"
-                        />
-
-                        <button type="submit">Upload new image</button>
-                    </form> -->
-
                     <span class="text-black-800 font-semibold">
                         <strong>
                             {{ asset.assetInventoryDTO.specs }}
@@ -332,17 +319,6 @@
                     [formGroup]="updateAssetForm"
                     (ngSubmit)="updateAssetSubmit()"
                 >
-                    <!-- <div class="mt-5">
-                    <div class="flex flex-column gap-2">
-                        <label htmlFor="accountabilityNo">Accountability#</label>
-                            <input
-                                type="text"
-                                pInputText
-                                id="accountabilityNo"
-                                formControlName="accountabilityNo"
-                            />
-                    </div>
-                </div> -->
 
                     <div class="mt-5">
                         <div
@@ -429,24 +405,6 @@
     </div>
 </p-dialog>
 
-<p-dialog
-    header="Delete"
-    [(visible)]="delete"
-    [modal]="true"
-    [style]="{ width: '50vw' }"
-    [draggable]="false"
-    [resizable]="false"
->
-    <p class="m-0">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-    </p>
-</p-dialog>
 <p-dialog
     header="View"
     [(visible)]="visible"
@@ -604,14 +562,14 @@
                     >
                 </div>
                 <div class="mt-5">
-                    <span>
+                    <a [href]="qrCodeImage" download="qr-code.png">
                         <img
                             [src]="qrCodeImage"
                             alt="QR CODE"
-                            width="100"
-                            height="100"
+                            width="120"
+                            height="120"
                         />
-                    </span>
+                    </a>
                 </div>
             </div>
         </div>

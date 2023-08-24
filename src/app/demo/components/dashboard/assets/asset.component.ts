@@ -6,7 +6,7 @@ import {
     FormGroup,
     Validators,
 } from '@angular/forms';
-import { MessageService } from 'primeng/api';
+import { MessageService, SelectItem } from 'primeng/api';
 import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { catchError, of } from 'rxjs';
@@ -20,6 +20,9 @@ import {
 import { AssetService } from 'src/app/services/asset.service';
 import { DropdownService } from 'src/app/services/dropdowns.service';
 import QRCode from 'qrcode';
+
+
+
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;
@@ -71,7 +74,8 @@ export class AssetComponent implements OnInit {
 
     dt: any;
 
-    sorts: Sort[] | undefined
+    sortOptions: SelectItem[] = [];
+
     selectedSort: Sort | undefined
 
     updateAssetForm: FormGroup;
@@ -123,11 +127,10 @@ export class AssetComponent implements OnInit {
             },
         ];
 
-        this.sorts = [
-            { name: 'Allocated', code: 'NY' },
-            { name: 'Available', code: 'RM' },
-
-        ]
+        this.sortOptions = [
+            { label: 'Allocated', value: false },
+            { label: 'Available', value: true }
+        ];
 
         this.serialNumber();
         this.getAssets();
@@ -144,7 +147,9 @@ export class AssetComponent implements OnInit {
     }
 
     unitTypes: string[] = [];
+
     items: MenuItem[] = []
+
     getUnitTypes() {
         this.dropdownService.getUnitTypes().subscribe(
             (unitTypes: string[]) => {
@@ -161,7 +166,9 @@ export class AssetComponent implements OnInit {
     }
 
     onUpload(event: any) {}
+
     onBasicUpload(): void {
+
         if (this.uploadForm.valid && this.fileContent) {
             const file = new File([this.fileContent], 'data.csv', {
                 type: 'text/csv',
@@ -173,6 +180,7 @@ export class AssetComponent implements OnInit {
                 alert('File Uploaded');
             });
         }
+
     }
 
     serialNumber() {
@@ -247,9 +255,26 @@ export class AssetComponent implements OnInit {
         this.selectedFile = event.target.files[0] as File;
     }
 
+    onSortChange(event: any, dt1: Table) {
+        const value = event.value;
+        if (value === true) {
+          // Sort by available assets
+          this.assets.sort((a, b) =>
+            a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? -1 : 1
+          );
+        } else if (value === false) {
+          // Sort by allocated assets
+          this.assets.sort((a, b) =>
+            a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? 1 : -1
+          );
+        }
+        // Reset pagination
+        dt1.first = 0;
+      }
 
 
-    assets: AssetAssignedDTO;
+
+    assets: AssetAssignedDTO[];
     asset: any;
     selectedUserFullName: string = '';
 
@@ -278,11 +303,10 @@ export class AssetComponent implements OnInit {
         USER: ${ this.asset.isAvailable === false
             ? this.asset.employeeDTO?.fullName
             : "No User"}
-
+        COMPANY: ${this.asset.company}
         DEPARTMENT: ${this.asset.department}
         BARCODE: ${this.asset.assetInventoryDTO.barcode}
         ACCOUNTABILITY: ${this.asset.accountabilityNo}
-
       `;
         QRCode.toDataURL(qrCodeData)
           .then(url => {
@@ -398,17 +422,6 @@ export class AssetComponent implements OnInit {
         );
     }
 
-    // initUpdateForm(){
-    //     this.updateAssetForm = this.formBuilder.group({
-    //         company: [''],
-    //         department: [''],
-    //         empId: [''],
-    //         remarks: [''],
-    //     })
-    // }
-
-
-
     updateAssetSubmit() {
         if (this.updateAssetForm.valid) {
             if (this.asset.id) {
@@ -454,6 +467,6 @@ export class AssetComponent implements OnInit {
     }
 
     qrCodeImage: string = '';
-
+    barcodeImage: string = '';
 
 }

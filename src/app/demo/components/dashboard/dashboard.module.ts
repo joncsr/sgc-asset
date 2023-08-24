@@ -56,6 +56,8 @@ import { ImageModule } from 'primeng/image';
 import { EditAssetComponent } from './assets/edit-asset/edit-asset.component';
 import { MessageService } from 'primeng/api';
 import { AddComponentComponent } from './component-storage/add-component/add-component.component';
+import { AssetListComponent } from './component-storage/asset-list/asset-list.component';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 
 @NgModule({
     imports: [
@@ -115,6 +117,8 @@ import { AddComponentComponent } from './component-storage/add-component/add-com
         AccordionModule,
         ImageModule,
 
+        DynamicDialogModule,
+
 
         RouterModule.forChild([
             {
@@ -143,9 +147,10 @@ import { AddComponentComponent } from './component-storage/add-component/add-com
         ComponentStorageComponent,
         AddAssetComponent,
         AddComponentComponent,
-        AssetUserComponent
+        AssetUserComponent,
+        AssetListComponent
     ],
 
-    providers: [MessageService],
+    providers: [MessageService, DialogService],
 })
 export class DashboardModule {}

@@ -10,4 +10,10 @@ export interface UnitType {
     unitName: string;
 }
 
+export interface ComponentType {
+    id:            number;
+    componentType: string;
+}
+
+
 
