@@ -1,27 +1,41 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MessageService } from 'primeng/api';
+import { HttpClient, HttpEventType, HttpRequest } from '@angular/common/http';
+import { Component, OnInit, OnDestroy, NgModule, ViewChild, ElementRef } from '@angular/core';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators,
+} from '@angular/forms';
+import { MessageService, SelectItem } from 'primeng/api';
 import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { catchError, of } from 'rxjs';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CustomerService } from 'src/app/demo/service/customer.service';
 import { Employee } from 'src/app/models/employee.model';
-import { AssetAssignedDTO, AssetAssignedDTOView,  } from 'src/app/models/uploading.model';
+import {
+    AssetAssignedDTO,
+    AssetAssignedDTOView,
+} from 'src/app/models/uploading.model';
 import { AssetService } from 'src/app/services/asset.service';
+import { DropdownService } from 'src/app/services/dropdowns.service';
+import QRCode from 'qrcode';
+
+
 
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;
     query: string;
 }
-
+interface Sort {
+    name: string;
+    code: string;
+}
 @Component({
     templateUrl: './asset.component.html',
 })
 export class AssetComponent implements OnInit {
-    customers!: Customer[];
 
     representatives!: Representative[];
 
@@ -29,59 +43,78 @@ export class AssetComponent implements OnInit {
 
     loading: boolean = true;
 
-    activityValues: number[] = [0, 100];
-
-    display: boolean = false;
-
     add_asset: boolean = false;
+
     upload_asset: boolean = false;
+
     download_asset: boolean = false;
 
-    items: MenuItem[] | undefined;
-    user_action:  MenuItem[] | undefined;
+
+    user_action: MenuItem[] | undefined;
 
     serialNumbers = [];
 
     uploadForm: FormGroup;
+
+    editImageForm: FormGroup;
+
     Data: any;
+
     fileContent: string;
 
     action: MenuItem[] | undefined;
 
     visible: boolean = false;
+
     edit: boolean = false;
+
     delete: boolean = false;
+
     change_user: boolean = false;
+
     dt: any;
+
+    sortOptions: SelectItem[] = [];
+
+    selectedSort: Sort | undefined
+
+    updateAssetForm: FormGroup;
 
     constructor(
         private assetService: AssetService,
         private formBuilder: FormBuilder,
-        private messageService: MessageService
-
+        private messageService: MessageService,
+        private dropdownService: DropdownService,
+        private http: HttpClient,
     ) {
         this.uploadForm = this.formBuilder.group({
             fileInput: ['', Validators.required],
         });
+
+        this.editImageForm = this.formBuilder.group({
+            imagePath: ['', Validators.required]
+        })
+
+        this.updateAssetForm = this.formBuilder.group({
+            company: [''], // Initial value
+            department: [''], // Initial value
+            remarks: [''], // Initial value
+            currentUser: ['None'], // Initial value
+            empId: [''],
+        });
     }
 
     ngOnInit() {
-        this.items = [
-            { label: 'Desktop', icon: 'pi pi-fw pi-twitter' },
-            { label: 'Laptop', icon: 'pi pi-fw pi-twitter' },
-            { label: 'TV', icon: 'pi pi-fw pi-twitter' },
-            { label: 'Printer', icon: 'pi pi-fw pi-twitter' },
-            { label: 'Others', icon: 'pi pi-fw pi-twitter' },
-        ];
 
         this.user_action = [
             {
-                label: 'Change', icon: 'pi pi-fw pi-user-edit'
+                label: 'Change',
+                icon: 'pi pi-fw pi-user-edit',
             },
             {
-                label: 'Remove'
-            }
-        ]
+                label: 'Remove',
+            },
+        ];
 
         this.action = [
             {
@@ -94,19 +127,48 @@ export class AssetComponent implements OnInit {
             },
         ];
 
-        this.serialNumber();
+        this.sortOptions = [
+            { label: 'Allocated', value: false },
+            { label: 'Available', value: true }
+        ];
 
+        this.serialNumber();
         this.getAssets();
         this.getUsers();
+        this.getCompanyCodes();
+        this.getDepartmentCodes();
+        this.getUnitTypes();
+
+
     }
 
     clear(table: Table) {
         table.clear();
     }
 
+    unitTypes: string[] = [];
+
+    items: MenuItem[] = []
+
+    getUnitTypes() {
+        this.dropdownService.getUnitTypes().subscribe(
+            (unitTypes: string[]) => {
+                this.unitTypes = unitTypes;
+                this.items = this.unitTypes.map(unitType => ({
+                    label: unitType,
+                    icon: 'pi pi-fw pi-check-circle' // You can set the icon as needed
+                }));
+            },
+            (error) => {
+                console.error('Error fetching unit types:', error);
+            }
+        );
+    }
+
     onUpload(event: any) {}
 
     onBasicUpload(): void {
+
         if (this.uploadForm.valid && this.fileContent) {
             const file = new File([this.fileContent], 'data.csv', {
                 type: 'text/csv',
@@ -118,6 +180,7 @@ export class AssetComponent implements OnInit {
                 alert('File Uploaded');
             });
         }
+
     }
 
     serialNumber() {
@@ -173,24 +236,56 @@ export class AssetComponent implements OnInit {
         }
     }
 
-    assets: AssetAssignedDTO[] = [];
-    asset: any
+    imageFile: string;
+    selectedFile: File = null;
+
+    progress: number = 0;
+    uploadSuccess: boolean = false;
+
+    onAssetImageUpload() {
+        if (this.selectedFile) {
+            const formData = new FormData();
+            formData.append('imageFile', this.selectedFile, this.selectedFile.name);
+
+            this.assetService.updateAssetImage(this.asset.id, formData).subscribe();
+          }
+    }
+
+    onImageSelected(event: any) {
+        this.selectedFile = event.target.files[0] as File;
+    }
+
+    onSortChange(event: any, dt1: Table) {
+        const value = event.value;
+        if (value === true) {
+          // Sort by available assets
+          this.assets.sort((a, b) =>
+            a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? -1 : 1
+          );
+        } else if (value === false) {
+          // Sort by allocated assets
+          this.assets.sort((a, b) =>
+            a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? 1 : -1
+          );
+        }
+        // Reset pagination
+        dt1.first = 0;
+      }
+
+
+
+    assets: AssetAssignedDTO[];
+    asset: any;
+    selectedUserFullName: string = '';
 
     getAssets() {
         this.assetService.getAsset().subscribe((data: any) => {
-            this.assets = data.map((asset: any) => ({
-                ...asset,
-                company: asset.company.toUpperCase(),
-                remarks: asset.remarks.toUpperCase(),
-                department: asset.department.toUpperCase(),
-                accountabilityNo: asset.accountabilityNo.toUpperCase(),
-                // Add similar lines for other properties that need to be in uppercase
-            }));
+            this.assets = data;
             this.loading = false;
         });
     }
 
-    editProduct(asset: AssetAssignedDTO) {
+    editAsset(asset: AssetAssignedDTO) {
         this.asset = asset;
         this.edit = true;
     }
@@ -203,6 +298,24 @@ export class AssetComponent implements OnInit {
     showDialog(viewAsset: AssetAssignedDTO) {
         this.asset = viewAsset;
         this.visible = true;
+
+        const qrCodeData = `
+        USER: ${ this.asset.isAvailable === false
+            ? this.asset.employeeDTO?.fullName
+            : "No User"}
+        COMPANY: ${this.asset.company}
+        DEPARTMENT: ${this.asset.department}
+        BARCODE: ${this.asset.assetInventoryDTO.barcode}
+        ACCOUNTABILITY: ${this.asset.accountabilityNo}
+      `;
+        QRCode.toDataURL(qrCodeData)
+          .then(url => {
+            this.qrCodeImage = url;
+          })
+          .catch(error => {
+            console.error('Error generating QR code:', error);
+          });
+
     }
 
     filter(filterValue: string[]) {
@@ -210,26 +323,33 @@ export class AssetComponent implements OnInit {
             // No filters selected, reset the filter
             this.dt.filter(null, 'assets', 'in');
         } else {
-            this.dt.filter((value: AssetAssignedDTO) => {
-                if (filterValue.includes('false') && value.isAvailable === false) {
-                    return true;
-                }
-                if (filterValue.includes('true') && value.isAvailable === true) {
-                    return true;
-                }
-                return false;
-            }, 'assets', 'custom');
+            this.dt.filter(
+                (value: AssetAssignedDTO) => {
+                    if (
+                        filterValue.includes('false') &&
+                        value.isAvailable === false
+                    ) {
+                        return true;
+                    }
+                    if (
+                        filterValue.includes('true') &&
+                        value.isAvailable === true
+                    ) {
+                        return true;
+                    }
+                    return false;
+                },
+                'assets',
+                'custom'
+            );
         }
     }
-
-
-
 
     users: Employee[] = [];
     filteredUsers: any[] | undefined;
     selectedUser: any;
 
-    getUsers(){
+    getUsers() {
         this.assetService.getUsers().subscribe(
             (users: Employee[]) => {
                 this.users = users;
@@ -241,7 +361,6 @@ export class AssetComponent implements OnInit {
     }
 
     filterUsers(event: AutoCompleteCompleteEvent) {
-
         let filtered: Employee[] = [];
         let query = event.query;
 
@@ -256,30 +375,98 @@ export class AssetComponent implements OnInit {
         this.filteredUsers = filtered;
     }
 
-
-    changeUser(){
+    changeUser() {
         this.change_user = true;
     }
 
-    onUserSelect(event: any) { // Replace `any` with the appropriate type
-        this.selectedUser = event; // Update selectedUser with the selected value
-    }
+
 
     clearSelectedUser() {
-        this.selectedUser = "No User";
+        this.selectedUser = 'No User';
     }
 
-    change(){
+    change() {
         this.change_user = false;
     }
 
-    updateAsset(){
+    updateAsset() {
         this.edit = false;
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'hihiihihi' });
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'hihiihihi',
+        });
+    }
+
+    companyCodes: string[] = [];
+    getCompanyCodes() {
+        this.dropdownService.getCompanyCodes().subscribe(
+            (companyCodes: string[]) => {
+                this.companyCodes = companyCodes;
+            },
+            (error) => {
+                console.error('Error fetching department codes:', error);
+            }
+        );
+    }
+
+    departmentCodes: string[] = [];
+    getDepartmentCodes() {
+        this.assetService.getDepartmentCodes().subscribe(
+            (departmentCodes: string[]) => {
+                this.departmentCodes = departmentCodes;
+            },
+            (error) => {
+                console.error('Error fetching department codes:', error);
+            }
+        );
+    }
+
+    updateAssetSubmit() {
+        if (this.updateAssetForm.valid) {
+            if (this.asset.id) {
+                const currentUser = this.updateAssetForm.value.currentUser;
+                const selectedUserId = typeof currentUser !== 'string' ? currentUser.id : null;
+
+                this.updateAssetForm.patchValue({
+                    empId: selectedUserId
+                });
+
+                this.assetService
+                    .updateAsset(this.asset.id, this.updateAssetForm.value)
+                    .subscribe();
+            }
+        }
+    }
+
+    onUserSelect(event: any) {
+        this.selectedUser = event;
+        console.log(this.selectedUser)
     }
 
 
+    showNewUserAutoComplete: boolean = false;
+    newUser(){
+        this.showNewUserAutoComplete = true
+    }
 
+    imageUpload(){
 
+        const formData = new FormData();
+        formData.append('image', this.selectedFile, this.selectedFile.name);
+        this.assetService.updateAssetImage(this.asset.id, formData).
+        subscribe((response)=>{
+           console.log(response)
+        })
+    }
+
+    file: any
+    getFile(event: any){
+       this.selectedFile=<File>event.target.files[0];
+
+    }
+
+    qrCodeImage: string = '';
+    barcodeImage: string = '';
 
 }

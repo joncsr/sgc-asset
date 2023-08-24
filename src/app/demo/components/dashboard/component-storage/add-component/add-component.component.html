@@ -1,0 +1,111 @@
+<p-toast></p-toast>
+<div class="grid p-fluid">
+    <div class="col-12 lg:col-12">
+        <div class="card">
+            <h3>Add Component</h3>
+            <form [formGroup]="componentForm" (ngSubmit)="onFormSubmit()">
+                <div class="p-formgrid grid">
+                    <div class="col-12 mb-1 lg:col-2 lg:mb-0">
+                        <label htmlFor="barcode">Barcode</label>
+                        <input
+                            pInputText
+                            id="barcode"
+                            type="text"
+                            formControlName="barcode"
+                        />
+                    </div>
+                    <div class="col-12 mb-1 lg:col-2 lg:mb-0">
+                        <label htmlFor="serialNo">SerialNo</label>
+                        <input
+                            pInputText
+                            id="serialNo"
+                            type="text"
+                            formControlName="serialNo"
+                        />
+                    </div>
+                    <div class="col-12 mb-1 lg:col-3 lg:mb-0">
+                        <label htmlFor="componentType">Component Type</label>
+                        <p-dropdown
+                            formControlName="componentType"
+                            [options]="componentTypes"
+                        ></p-dropdown>
+                    </div>
+                    <div class="col-12 mb-1 lg:col-2 lg:mb-0">
+                        <label htmlFor="brand">Brand</label>
+                        <input
+                            pInputText
+                            id="brand"
+                            type="text"
+                            formControlName="brand"
+                        />
+                    </div>
+                    <div class="col-12 mb-1 lg:col-3 lg:mb-0">
+                        <label htmlFor="model">Model</label>
+                        <input
+                            pInputText
+                            id="model"
+                            type="text"
+                            formControlName="model"
+                        />
+                    </div>
+                    <div class="col-12 mb-1 lg:col-4 lg:mb-0">
+                        <label htmlFor="specification">Specification</label>
+                        <input
+                            pInputText
+                            id="specification"
+                            type="text"
+                            formControlName="specification"
+                        />
+                    </div>
+                    <div class="col-12 mb-1 lg:col-4 lg:mb-0">
+                        <label htmlFor="vendor">Vendor</label>
+                        <input
+                            pInputText
+                            id="vendor"
+                            type="text"
+                            formControlName="vendor"
+                        />
+                    </div>
+                    <div class="col-12 mb-1 lg:col-4 lg:mb-0">
+                        <label htmlFor="datePO">Date PO</label>
+                        <p-calendar
+                            [showIcon]="true"
+                            formControlName="datePO"
+                        ></p-calendar>
+                    </div>
+                    <div class="col-12 mb-1 lg:col-4 lg:mb-0">
+                        <label htmlFor="dateAcquired">Date Acquired</label>
+                        <p-calendar
+                            [showIcon]="true"
+                            formControlName="dateAcquired"
+                        ></p-calendar>
+                    </div>
+                    <div class="col-12 mb-1 lg:col-6 lg:mb-0">
+                        <label htmlFor="assignedID">Assign To</label>
+                        <div class="p-inputgroup">
+                            <input
+                                type="text"
+                                pInputText
+                                id="assignedID"
+                                formControlName="asset"
+                                placeholder="Keyword"
+                            />
+                            <button
+                                type="button"
+                                pButton
+                                icon="pi pi-plus"
+                                styleClass="p-button-warn"
+                                (click)="showAsset()"
+                            ></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid formgrid mt-5 flex justify-content-end">
+                    <div class="col-12 mb-2 lg:col-1 lg:mb-0">
+                        <button pButton type="submit" label="Submit"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

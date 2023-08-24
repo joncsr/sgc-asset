@@ -10,6 +10,8 @@ export interface AssetAssignedDTO {
     lastModified: string;
     employeeDTO?: EmployeeDTO;
     isAvailable: boolean;
+    imageFile: string;
+    imagePath : string;
 }
 
 export interface AssetInventoryDTO {

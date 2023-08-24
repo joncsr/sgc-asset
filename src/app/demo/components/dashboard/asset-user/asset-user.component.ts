@@ -30,7 +30,6 @@ export class AssetUserComponent implements OnInit {
     ngOnInit() {
         this.loading = false;
         this.getEmployee();
-
     }
 
     clear(table: Table) {

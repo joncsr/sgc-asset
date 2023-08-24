@@ -21,6 +21,7 @@ export class ComponentStorageComponent implements OnInit {
     display: boolean = false;
 
     add_asset: boolean = false;
+
     upload_asset: boolean = false;
 
     items: MenuItem[] | undefined;
