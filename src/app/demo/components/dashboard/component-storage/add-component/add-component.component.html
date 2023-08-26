@@ -12,6 +12,7 @@
                             id="barcode"
                             type="text"
                             formControlName="barcode"
+                            [ngStyle]="{ 'font-weight': 'bold' }"
                         />
                     </div>
                     <div class="col-12 mb-1 lg:col-2 lg:mb-0">
@@ -48,7 +49,7 @@
                             formControlName="model"
                         />
                     </div>
-                    <div class="col-12 mb-1 lg:col-4 lg:mb-0">
+                    <div class="col-12 mb-1 lg:col-3 lg:mb-0">
                         <label htmlFor="specification">Specification</label>
                         <input
                             pInputText
@@ -57,7 +58,7 @@
                             formControlName="specification"
                         />
                     </div>
-                    <div class="col-12 mb-1 lg:col-4 lg:mb-0">
+                    <div class="col-12 mb-1 lg:col-3 lg:mb-0">
                         <label htmlFor="vendor">Vendor</label>
                         <input
                             pInputText
@@ -66,7 +67,16 @@
                             formControlName="vendor"
                         />
                     </div>
-                    <div class="col-12 mb-1 lg:col-4 lg:mb-0">
+                    <div class="col-12 mb-1 lg:col-3 lg:mb-0">
+                        <label htmlFor="warranty">Warranty</label>
+                        <input
+                            pInputText
+                            id="warranty"
+                            type="text"
+                            formControlName="warranty"
+                        />
+                    </div>
+                    <div class="col-12 mb-1 lg:col-3 lg:mb-0">
                         <label htmlFor="datePO">Date PO</label>
                         <p-calendar
                             [showIcon]="true"
@@ -102,7 +112,7 @@
                 </div>
                 <div class="grid formgrid mt-5 flex justify-content-end">
                     <div class="col-12 mb-2 lg:col-1 lg:mb-0">
-                        <button pButton type="submit" label="Submit"></button>
+                        <button pButton type="submit" [disabled]="!componentForm" label="Submit"></button>
                     </div>
                 </div>
             </form>

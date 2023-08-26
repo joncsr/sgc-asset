@@ -1,0 +1,172 @@
+<div *ngIf="config.data" class="">
+    <div class="grid">
+        <div class="col-12 lg:col-6 xl:col-5">
+            <div class="card shadow-4 mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <p-image
+                        src="https://www.bhphotovideo.com/images/images2500x2500/hp_h2c22aa_abl_hp_x3000_wireless_mouse_1084959.jpg"
+                        alt="Image"
+                        width="250"
+                        [preview]="true"
+                    ></p-image>
+                </div>
+                <span class="text-black-800 font-semibold">
+                    <strong> {{ config.data.component.specification }} </strong>
+                    -
+                    {{ config.data.component.componentType }}
+                </span>
+                <div class="mt-2">
+                    <span>
+                        BARCODE
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                <!-- {{ asset.assetInventoryDTO.barcode }} -->
+                            </strong>
+                        </p></span
+                    >
+                </div>
+                <div class="mt-2">
+                    <span>
+                        SERIAL NUMBER
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ config.data.component.serialNo }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="mt-5">
+                <span>
+                    CURRENT USER
+                    <p class="text-black-500 font-semibold text-xl">
+                        <strong>
+                            {{
+                                config.data.component.isAvailable === false
+                                    ? config.data.component.assetAssignedDTO3
+                                          ?.employeeDTO?.fullName
+                                    : "No User"
+                            }}
+                        </strong>
+                    </p></span
+                >
+            </div>
+
+            <div class="mt-5">
+                <span>
+                    ACCOUNTABILITY NUMBER
+                    <p class="text-black-800 font-medium">
+                        <strong>
+                            {{
+                                config.data.component.assetAssignedDTO3
+                                    ?.accountabilityNo
+                            }}
+                        </strong>
+                    </p></span
+                >
+            </div>
+
+            <div class="mt-5">
+                <span>
+                    COMPANY
+                    <p class="text-black-800 font-semibold">
+                        <strong>
+                                {{  config.data.component.assetAssignedDTO3.company }}
+                            </strong>
+                    </p></span
+                >
+            </div>
+
+            <div class="mt-2">
+                <span>
+                    DEPARTMENT
+                    <p class="text-black-800 font-semibold">
+                        <strong>
+                            {{  config.data.component.assetAssignedDTO3.department }}
+                            </strong>
+                    </p></span
+                >
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-4">
+            <div class="mt-5">
+                <span>
+                    VENDOR
+                    <p class="text-black-800 font-semibold">
+                        <strong>
+                            {{  config.data.component.vendor }}
+                            </strong>
+                    </p></span
+                >
+            </div>
+
+            <div class="mt-5">
+                <span>
+                    WARRANTY
+                    <p class="text-black-800 font-semibold">
+                        <strong>
+                            {{  config.data.component.warranty }}
+                            </strong>
+                    </p></span
+                >
+            </div>
+
+            <div class="mt-5">
+                <span>
+                    DATE PO
+                    <p class="text-black-800 font-semibold">
+                        <strong>
+                                {{config.data.component.datePO | date }}
+                            </strong>
+                    </p></span
+                >
+            </div>
+
+            <div class="mt-5">
+                <span>
+                    DATE ACQUIRED
+                    <p class="text-black-800 font-semibold">
+                        <strong>
+                                {{
+                                    config.data.component.dateAcquired ===
+                                    null
+                                        ? "Empty Field"
+                                        :config.data.component.dateAcquired | date
+                                }}
+                            </strong>
+                    </p>
+                    </span
+                >
+            </div>
+            <div class="mt-5"></div>
+        </div>
+    </div>
+    <p-accordion>
+        <p-accordionTab header="Asset">
+            <div class="grid">
+                <div class="col-12 lg:col-6 xl:col-6">
+                    <div class="card mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">{{config.data.component.assetAssignedDTO3.assetInventoryDTO.barcode}}</span>
+                                <div class="text-900 font-medium text-xl">{{config.data.component.assetAssignedDTO3.assetInventoryDTO.unit}}</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-blue-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                                <i class="pi pi-verified text-blue-500 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-12 md:col-6 lg:col-3" *ngFor="let com of component" >
+                    <div class="text-center p-3 border-round-sm bg-primary font-bold">{{com.componentType}}</div>
+                </div> -->
+            </div>
+        </p-accordionTab>
+    </p-accordion>
+    <p-accordion>
+        <p-accordionTab header="History"> Pas user info </p-accordionTab>
+    </p-accordion>
+</div>

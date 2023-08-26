@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
-import { ComponentType } from 'src/app/models/dropdowns.model';
-import { Department } from 'src/app/models/employee.model';
 import { AssetAssignedDTO } from 'src/app/models/uploading.model';
 import { AssetService } from 'src/app/services/asset.service';
 
