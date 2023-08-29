@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
-import { ComponentType } from 'src/app/models/dropdowns.model';
-import { Department } from 'src/app/models/employee.model';
 import { AssetAssignedDTO } from 'src/app/models/uploading.model';
 import { AssetService } from 'src/app/services/asset.service';
 
@@ -12,8 +10,6 @@ import { AssetService } from 'src/app/services/asset.service';
     templateUrl: './asset-list.component.html',
 })
 export class AssetListComponent implements OnInit {
-
-
     sortOptions: SelectItem[] = [];
     sortOrder: number = 0;
     sortField: string = '';
@@ -21,21 +17,19 @@ export class AssetListComponent implements OnInit {
     constructor(
         private assetService: AssetService,
         public ref: DynamicDialogRef
-    ){}
+    ) {}
 
     ngOnInit(): void {
-       this.getAssets();
+        this.getAssets();
 
-
-       this.sortOptions = [
-        { label: 'Allocated', value: false },
-        { label: 'Available', value: true }
-    ];
-
+        this.sortOptions = [
+            { label: 'Allocated', value: false },
+            { label: 'Available', value: true },
+        ];
     }
 
     loading: boolean = true;
-    assets: AssetAssignedDTO[]
+    assets: AssetAssignedDTO[];
     asset: any;
     selectedUserFullName: string = '';
 
@@ -55,18 +49,17 @@ export class AssetListComponent implements OnInit {
     onSortChange(event: any, dt1: Table) {
         const value = event.value;
         if (value === true) {
-          // Sort by available assets
-          this.assets.sort((a, b) =>
-            a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? -1 : 1
-          );
+            // Sort by available assets
+            this.assets.sort((a, b) =>
+                a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? -1 : 1
+            );
         } else if (value === false) {
-          // Sort by allocated assets
-          this.assets.sort((a, b) =>
-            a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? 1 : -1
-          );
+            // Sort by allocated assets
+            this.assets.sort((a, b) =>
+                a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? 1 : -1
+            );
         }
         // Reset pagination
         dt1.first = 0;
-      }
-
+    }
 }

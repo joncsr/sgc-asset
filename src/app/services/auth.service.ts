@@ -33,10 +33,4 @@ export class AuthService  {
   logout()  {
 
   }
-
-
-
-
-
-
 }

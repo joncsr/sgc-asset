@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Company, Department } from '../models/employee.model';
-import { UnitType } from '../models/dropdowns.model';
+import { ComponentType, UnitType } from '../models/dropdowns.model';
 
 @Injectable({
     providedIn: 'root',
@@ -37,6 +37,14 @@ export class DropdownService {
             .get<UnitType[]>('/api/UnitTypes')
             .pipe(
                 map((units: UnitType[]) => units.map((unit) => unit.unitName))
+            );
+    }
+
+    getComponentTypes(): Observable<string[]> {
+        return this._http
+            .get<ComponentType[]>('/api/api/ComponentTypes')
+            .pipe(
+                map((units: ComponentType[]) => units.map((unit) => unit.componentType))
             );
     }
 }
