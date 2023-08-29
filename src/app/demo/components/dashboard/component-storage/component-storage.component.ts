@@ -3,11 +3,20 @@ import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CustomerService } from 'src/app/demo/service/customer.service';
+import { AssetComponentService } from 'src/app/services/asset-component.service';
+import { Component as Com } from 'src/app/models/component.model';
+import { MessageService } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ComponentViewComponent } from './component-view/component-view.component';
+import { DropdownService } from 'src/app/services/dropdowns.service';
+import { ComponentEditComponent } from './component-edit/component-edit.component';
 
 @Component({
     templateUrl: './component-storage.component.html',
 })
 export class ComponentStorageComponent implements OnInit {
+    ref: DynamicDialogRef;
+
     customers!: Customer[];
 
     representatives!: Representative[];
@@ -24,11 +33,13 @@ export class ComponentStorageComponent implements OnInit {
 
     upload_asset: boolean = false;
 
-    items: MenuItem[] | undefined;
-
-    serialNumbers = [];
-
-    constructor(private customerService: CustomerService) {}
+    constructor(
+        private customerService: CustomerService,
+        private componentService: AssetComponentService,
+        public dialogService: DialogService,
+        public messageService: MessageService,
+        private selectionService: DropdownService
+    ) {}
 
     ngOnInit() {
         this.customerService.getCustomersLarge().then((customers) => {
@@ -40,37 +51,8 @@ export class ComponentStorageComponent implements OnInit {
             });
         });
 
-        this.representatives = [
-            { name: 'Amy Elsner', image: 'amyelsner.png' },
-            { name: 'Anna Fali', image: 'annafali.png' },
-            { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-            { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-            { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-            { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-            { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-            { name: 'Onyama Limba', image: 'onyamalimba.png' },
-            { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-            { name: 'Xuxue Feng', image: 'xuxuefeng.png' },
-        ];
-
-        this.statuses = [
-            { label: 'Unqualified', value: 'unqualified' },
-            { label: 'Qualified', value: 'qualified' },
-            { label: 'New', value: 'new' },
-            { label: 'Negotiation', value: 'negotiation' },
-            { label: 'Renewal', value: 'renewal' },
-            { label: 'Proposal', value: 'proposal' },
-        ];
-
-        this.items = [
-            { label: 'Hard Drive', icon: 'pi pi-fw pi-twitter' },
-            { label: 'Mouse', icon: 'pi pi-fw pi-twitter' },
-            { label: 'Monitors', icon: 'pi pi-fw pi-twitter' },
-            { label: 'HDMI', icon: 'pi pi-fw pi-twitter' },
-            { label: 'Others', icon: 'pi pi-fw pi-twitter' },
-        ];
-
-        this.serialNumber();
+        this.getUnitTypes();
+        this.getComponents();
     }
 
     clear(table: Table) {
@@ -81,18 +63,75 @@ export class ComponentStorageComponent implements OnInit {
 
     onBasicUpload() {}
 
-    serialNumber() {
-        for (let i = 0; i < 10; i++) {
-            this.serialNumbers.push(
-                `A${Math.floor(Math.random() * 999) + 1}${
-                    Math.floor(Math.random() * 9) + 1
-                }A112${Math.floor(Math.random() * 9999) + 1}`
-            );
-        }
+    components: Com[];
+    getComponents() {
+        this.componentService.getComponents().subscribe((data: any) => {
+            if (this.selectedComponentType) {
+                this.components = data.filter((component: Com) => {
+                    return (
+                        component.componentType === this.selectedComponentType
+                    );
+                });
+            } else {
+                this.components = data;
+            }
+            this.loading = false;
+        });
     }
-    getRandomSerialNumber() {
-        return this.serialNumbers[
-            Math.floor(Math.random() * this.serialNumbers.length)
-        ];
+
+    component: any;
+    showComponent(component: Com) {
+        this.ref = this.dialogService.open(ComponentViewComponent, {
+            data: {
+                component,
+            },
+            header: 'View Component',
+            width: '70%',
+            contentStyle: { overflow: 'auto' },
+            baseZIndex: 10000,
+            maximizable: true,
+        });
+    }
+
+    componentTypes: string[] = [];
+    items: MenuItem[] = [];
+
+    getUnitTypes() {
+        this.selectionService.getComponentTypes().subscribe(
+            (componentTypes: string[]) => {
+                this.componentTypes = componentTypes;
+                this.items = this.componentTypes.map((componentType) => ({
+                    label: componentType,
+                    icon: 'pi pi-fw pi-check-circle',
+                    command: () => this.onTabMenuItemSelect(componentType), // Pass componentType to the method
+                }));
+            },
+            (error) => {
+                console.error('Error fetching unit types:', error);
+            }
+        );
+    }
+
+    selectedComponentType: string | undefined;
+    // Function to handle tab menu item selection
+    onTabMenuItemSelect(componentType: string) {
+        this.selectedComponentType = componentType;
+        this.getComponents();
+    }
+
+    editComponent(component: Com) {
+        this.ref = this.dialogService.open(ComponentEditComponent, {
+            data: {
+                component,
+            },
+            header: 'Edit Component',
+            width: '70%',
+            contentStyle: { overflow: 'auto' },
+            baseZIndex: 10000,
+            maximizable: true,
+        });
+        this.ref.onClose.subscribe((data: Com) => {
+            console.log('Dialog closed with data:', data.barcode);
+        });
     }
 }

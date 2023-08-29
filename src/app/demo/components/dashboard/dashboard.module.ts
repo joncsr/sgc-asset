@@ -58,6 +58,8 @@ import { MessageService } from 'primeng/api';
 import { AddComponentComponent } from './component-storage/add-component/add-component.component';
 import { AssetListComponent } from './component-storage/asset-list/asset-list.component';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ComponentViewComponent } from './component-storage/component-view/component-view.component';
+import { ComponentEditComponent } from './component-storage/component-edit/component-edit.component';
 
 @NgModule({
     imports: [
@@ -148,7 +150,9 @@ import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
         AddAssetComponent,
         AddComponentComponent,
         AssetUserComponent,
-        AssetListComponent
+        AssetListComponent,
+        ComponentViewComponent,
+        ComponentEditComponent
     ],
 
     providers: [MessageService, DialogService],
