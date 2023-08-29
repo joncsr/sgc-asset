@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AssetService } from 'src/app/services/asset.service';
 import { AssetListComponent } from '../asset-list/asset-list.component';
 import { MessageService } from 'primeng/api';
-import { AssetAssignedDTO } from 'src/app/models/uploading.model';
 
 @Component({
     templateUrl: './add-component.component.html',
@@ -24,22 +23,37 @@ export class AddComponentComponent implements OnInit {
         this.getComponentType();
     }
 
+    /**
+     * Fetches the component types from the service and updates the componentTypes array.
+     */
+
     componentTypes: string[] = [];
-    getComponentType() {
+    getComponentType(): void {
+        // Fetch component types using the asset service
         this.assetService.getComponentTypes().subscribe(
             (componentTypes: string[]) => {
+                // Update the componentTypes array with the fetched data
                 this.componentTypes = componentTypes;
             },
             (error) => {
-                console.error('Error fetching department codes:', error);
+                // Handle error while fetching component types
+                console.error('Error fetching type codes:', error);
             }
         );
     }
 
-    componentAddForm() {
+    /**
+     * Sets up the form for adding a new component with default values, including a generated barcode.
+     */
+    componentAddForm(): void {
+        // Generate a barcode for the component
+        const generatedBarcode = this.generateBarcode();
+        console.log('Generated Barcode:', generatedBarcode);
+
+        // Create the component form with default values and validations
         this.componentForm = this.formBuilder.group({
             barcode: [
-                this.generateBarcode(),
+                generatedBarcode, // Use the generated barcode as the initial value
                 [Validators.required, Validators.minLength(6)],
             ],
             serialNo: [''],
@@ -50,6 +64,7 @@ export class AddComponentComponent implements OnInit {
             vendor: [''],
             datePO: [''],
             dateAcquired: [''],
+            warranty:[''],
             asset: [''],
             assignedID: [''],
         });
@@ -61,7 +76,7 @@ export class AddComponentComponent implements OnInit {
         const month = this.padNumber(currentDate.getMonth() + 1, 2);
         const day = this.padNumber(currentDate.getDate(), 2);
         const randomPart = this.generateRandomNumber(6);
-        const sequence = '01'; // Replace this with your sequence number logic if needed
+        const sequence = '01';
 
         return `${year}-${month}-${day}-${randomPart}-${sequence}`;
     }
@@ -83,42 +98,58 @@ export class AddComponentComponent implements OnInit {
     }
 
     onFormSubmit() {
-        if(this.componentForm.valid){
-            this.assetService.addAssetComponent(this.componentForm.value).subscribe(
-                (response) => {
-                    // Success callback
-                    console.log('Component added successfully:', response);
-                    this.messageService.add({ severity: 'success', summary: 'Asset Selected', detail: 'Added Success' });
-                    this.componentForm.reset();
-                    setTimeout(() => {
-                        window.location.reload();
-                      }, 2000);
-                  },
-            )
+        if (this.componentForm.valid) {
+            this.assetService
+                .addAssetComponent(this.componentForm.value)
+                .subscribe((response) => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Asset Selected',
+                        detail: 'Added Success',
+                    });
+                    // this.componentForm.reset();
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    //   }, 2000);
+
+                    alert(response);
+                });
         }
     }
 
-    asset: any
-    selectedAsset(){
-        this.asset.assetInventoryId
+    asset: any;
+    selectedAsset() {
+        this.asset.assetInventoryId;
     }
-    showAsset() {
+
+    /**
+     * Opens a dialog to select an asset and updates the component form fields based on the selected asset.
+     */
+    showAsset(): void {
+        // Open a dialog to select an asset
         this.ref = this.dialogService.open(AssetListComponent, {
-            data: {
-                id: '51gF3'
-            },
             header: 'Select Asset',
             width: '70%',
             contentStyle: { overflow: 'auto' },
             baseZIndex: 10000,
-            maximizable: true
-
+            maximizable: true,
         });
+
+        // Subscribe to the onClose event of the dialog
         this.ref.onClose.subscribe((asset: any) => {
             if (asset) {
-                this.componentForm.patchValue({ assignedID: asset.assetInventoryId });
-                this.componentForm.patchValue({ asset: asset.accountabilityNo });
-                this.messageService.add({ severity: 'info', summary: `Asset Selected: ${asset.assetInventoryId}`, detail: asset.accountabilityNo });
+                // Update component form fields with selected asset information
+                this.componentForm.patchValue({
+                    assignedID: asset.assetInventoryId, // Set the assigned ID
+                    asset: asset.accountabilityNo, // Set the asset accountability number
+                });
+
+                // Display a message indicating the selected asset
+                this.messageService.add({
+                    severity: 'info',
+                    summary: `Asset Selected: ${asset.assetInventoryId}`,
+                    detail: asset.accountabilityNo,
+                });
             }
         });
     }

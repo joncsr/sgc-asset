@@ -22,10 +22,10 @@ import { MessageService } from 'primeng/api';
         FormsModule,
         PasswordModule,
         ReactiveFormsModule,
-        // ToastModule,
-        // MessagesModule
     ],
     declarations: [LoginComponent],
-    providers: [MessageService]
+
+    providers: [MessageService],
+
 })
 export class LoginModule { }
