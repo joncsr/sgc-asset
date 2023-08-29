@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
-    templateUrl: './component-view.component.html',
+    templateUrl: './component-edit.component.html',
 })
-export class ComponentViewComponent implements OnInit {
+export class ComponentEditComponent implements OnInit {
 
     constructor(
         public ref: DynamicDialogRef,

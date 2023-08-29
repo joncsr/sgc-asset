@@ -59,6 +59,7 @@ import { AddComponentComponent } from './component-storage/add-component/add-com
 import { AssetListComponent } from './component-storage/asset-list/asset-list.component';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ComponentViewComponent } from './component-storage/component-view/component-view.component';
+import { ComponentEditComponent } from './component-storage/component-edit/component-edit.component';
 
 @NgModule({
     imports: [
@@ -151,6 +152,7 @@ import { ComponentViewComponent } from './component-storage/component-view/compo
         AssetUserComponent,
         AssetListComponent,
         ComponentViewComponent,
+        ComponentEditComponent
     ],
 
     providers: [MessageService, DialogService],

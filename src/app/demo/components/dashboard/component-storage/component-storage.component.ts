@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ComponentViewComponent } from './component-view/component-view.component';
 import { DropdownService } from 'src/app/services/dropdowns.service';
+import { ComponentEditComponent } from './component-edit/component-edit.component';
 
 @Component({
     templateUrl: './component-storage.component.html',
@@ -90,9 +91,6 @@ export class ComponentStorageComponent implements OnInit {
             baseZIndex: 10000,
             maximizable: true,
         });
-        this.ref.onClose.subscribe((data: any) => {
-            console.log('Dialog closed with data:', data);
-        });
     }
 
     componentTypes: string[] = [];
@@ -119,5 +117,21 @@ export class ComponentStorageComponent implements OnInit {
     onTabMenuItemSelect(componentType: string) {
         this.selectedComponentType = componentType;
         this.getComponents();
+    }
+
+    editComponent(component: Com) {
+        this.ref = this.dialogService.open(ComponentEditComponent, {
+            data: {
+                component,
+            },
+            header: 'Edit Component',
+            width: '70%',
+            contentStyle: { overflow: 'auto' },
+            baseZIndex: 10000,
+            maximizable: true,
+        });
+        this.ref.onClose.subscribe((data: Com) => {
+            console.log('Dialog closed with data:', data.barcode);
+        });
     }
 }
