@@ -16,6 +16,7 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Asset Management',
                 items: [
+
                     { label: 'IT', icon: 'pi pi-file', routerLink: ['/asset'] },
                     {
                         label: 'Request',
