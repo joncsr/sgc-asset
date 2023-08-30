@@ -1,13 +1,6 @@
 import { HttpClient, HttpEventType, HttpRequest } from '@angular/common/http';
-import {
-    Component,
-    OnInit,
-} from '@angular/core';
-import {
-    FormBuilder,
-    FormGroup,
-    Validators,
-} from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService, SelectItem } from 'primeng/api';
 import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
@@ -23,6 +16,10 @@ import { DropdownService } from 'src/app/services/dropdowns.service';
 import QRCode from 'qrcode';
 import { AssetComponentService } from 'src/app/services/asset-component.service';
 import { Component as Com } from 'src/app/models/component.model';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { AssetComponentViewComponent } from './asset-component-view/asset-component-view.component';
+import { AssetViewComponent } from './view-asset/view-asset.component';
+import { EditAssetComponent } from './edit-asset/edit-asset.component';
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;
@@ -78,13 +75,16 @@ export class AssetComponent implements OnInit {
 
     updateAssetForm: FormGroup;
 
+    ref: DynamicDialogRef;
+
     constructor(
         private assetService: AssetService,
         private formBuilder: FormBuilder,
         private messageService: MessageService,
         private dropdownService: DropdownService,
         private http: HttpClient,
-        private componentService: AssetComponentService
+        private componentService: AssetComponentService,
+        public dialogService: DialogService
     ) {
         this.uploadForm = this.formBuilder.group({
             fileInput: ['', Validators.required],
@@ -153,7 +153,7 @@ export class AssetComponent implements OnInit {
                 this.items = this.unitTypes.map((unitType) => ({
                     label: unitType,
                     icon: 'pi pi-fw pi-check-circle',
-                    command: () => this.onTabMenuItemSelect(unitType) // You can set the icon as needed
+                    command: () => this.onTabMenuItemSelect(unitType), // You can set the icon as needed
                 }));
             },
             (error) => {
@@ -282,8 +282,7 @@ export class AssetComponent implements OnInit {
             if (this.selectedAssetType) {
                 this.assets = data.filter((asset: AssetAssignedDTO) => {
                     return (
-                        asset.assetInventoryDTO?.unit ===
-                        this.selectedAssetType
+                        asset.assetInventoryDTO?.unit === this.selectedAssetType
                     );
                 });
             } else {
@@ -300,20 +299,63 @@ export class AssetComponent implements OnInit {
         this.getAssets();
     }
 
+    employeeId: number;
     editAsset(asset: AssetAssignedDTO) {
         this.asset = asset;
         this.edit = true;
+        this.employeeId = asset.id;
+        console.log(this.employeeId);
+        this.getAssetComponent(this.employeeId);
     }
 
-    deleteProduct(asset: AssetAssignedDTO) {
+    editAssetDynamicDialog(asset: AssetAssignedDTO){
+
+        this.ref = this.dialogService.open(EditAssetComponent, {
+            data: {
+                asset,
+            },
+            header: 'Edit Asset',
+            width: '80%',
+            contentStyle: { overflow: 'auto' },
+            baseZIndex: 10000,
+            maximizable: true,
+        });
+        console.log(asset)
+    }
+
+
+    // showDialog(viewAsset: AssetAssignedDTO) {
+    //     this.asset = viewAsset;
+    //     this.visible = true;
+
+    //     const qrCodeData = `
+    //     USER: ${
+    //         this.asset.isAvailable === false
+    //             ? this.asset.employeeDTO?.fullName
+    //             : 'No User'
+    //     }
+    //     COMPANY: ${this.asset.company}
+    //     DEPARTMENT: ${this.asset.department}
+    //     BARCODE: ${this.asset.assetInventoryDTO.barcode}
+    //     ACCOUNTABILITY: ${this.asset.accountabilityNo}
+    //   `;
+    //     QRCode.toDataURL(qrCodeData)
+    //         .then((url) => {
+    //             this.qrCodeImage = url;
+    //         })
+    //         .catch((error) => {
+    //             console.error('Error generating QR code:', error);
+    //         });
+
+    //     this.asset.id = viewAsset.id;
+    //     console.log(this.asset.id);
+
+    //     this.getAssetComponent(this.asset.id);
+    // }
+
+    showDynamicDialog(asset: AssetAssignedDTO) {
         this.asset = asset;
-        this.delete = true;
-    }
-
-    showDialog(viewAsset: AssetAssignedDTO) {
-        this.asset = viewAsset;
-        this.visible = true;
-
+        this.asset.id = asset.id;
         const qrCodeData = `
         USER: ${
             this.asset.isAvailable === false
@@ -333,10 +375,20 @@ export class AssetComponent implements OnInit {
                 console.error('Error generating QR code:', error);
             });
 
-        this.asset.id = viewAsset.id;
-        console.log(this.asset.id);
+        const QRimage = this.qrCodeImage;
 
-        this.getAssetComponent(this.asset.id);
+        this.ref = this.dialogService.open(AssetViewComponent, {
+            data: {
+                asset,
+                QRimage,
+            },
+            header: 'View Asset',
+            width: '80%',
+            contentStyle: { overflow: 'auto' },
+            baseZIndex: 10000,
+            maximizable: true,
+        });
+
     }
 
     filter(filterValue: string[]) {
@@ -446,7 +498,9 @@ export class AssetComponent implements OnInit {
             if (this.asset.id) {
                 const currentUser = this.updateAssetForm.value.currentUser;
                 const selectedUserId =
-                    typeof currentUser !== 'string' ? currentUser.id : null;
+                    typeof currentUser !== 'string'
+                        ? currentUser.id
+                        : this.employeeId;
 
                 this.updateAssetForm.patchValue({
                     empId: selectedUserId,
@@ -454,7 +508,18 @@ export class AssetComponent implements OnInit {
 
                 this.assetService
                     .updateAsset(this.asset.id, this.updateAssetForm.value)
-                    .subscribe();
+                    .subscribe((response) => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Asset Updated',
+                            detail: 'Added Success',
+                        });
+                        this.updateAssetForm.reset();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                        alert('Added');
+                    });
             }
         }
     }
@@ -498,5 +563,19 @@ export class AssetComponent implements OnInit {
                 console.error('Error fetching asset components:', error);
             }
         );
+    }
+
+    showComponent(component: Com) {
+        this.ref = this.dialogService.open(AssetComponentViewComponent, {
+            data: {
+                component,
+            },
+            header: 'View Component',
+            width: '70%',
+            contentStyle: { overflow: 'auto' },
+            baseZIndex: 10000,
+            maximizable: true,
+        });
+        console.log(component);
     }
 }

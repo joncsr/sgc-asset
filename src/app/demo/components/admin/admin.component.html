@@ -1,0 +1,18 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card card-w-title flex flex-wrap">
+            <div class="col-12 md:col-12 h-full">
+                <h5>Admin Asset Management</h5>
+                <p-tabMenu styleClass="mb-5" [model]="routeItems"></p-tabMenu>
+
+                <!-- <p-steps
+                    [model]="routeItems"
+                    styleClass="mt-5"
+                    [readonly]="false"
+                ></p-steps> -->
+            </div>
+            <div class="col-12 md:col-12 mt-5 md:mt-0">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>

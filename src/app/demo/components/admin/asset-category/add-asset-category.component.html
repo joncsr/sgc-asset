@@ -1,0 +1,38 @@
+<div class="grid">
+	<div class="col-12 xl:col-4">
+		<div class="card">
+			<h5>Asset Category List</h5>
+            <div>
+                <button
+                (click)="addAsset = true"
+                    pButton
+                    icon="pi pi-plus"
+                ></button>
+            </div>
+			<p-orderList [value]="orderAssetType" header="Unit Types" [dragdrop]="true" [listStyle]="{'height':'250px'}">
+
+				<ng-template let-type pTemplate="item">
+					<div>{{type.unitName}}</div>
+				</ng-template>
+			</p-orderList>
+		</div>
+	</div>
+    <div class="col-12 xl:col-8">
+        <div class="card flex flex-column align-items-center">
+            <h5 class="text-left w-full">Pie Chart</h5>
+            <p-chart type="pie" [data]="pieData" [options]="pieOptions"></p-chart>
+        </div>
+    </div>
+
+</div>
+
+<p-dialog
+    header="Add"
+    [(visible)]="addAsset"
+    [modal]="true"
+    showEffect="fade"
+    [style]="{ width: '30vw' }"
+    [breakpoints]="{ '960px': '75vw' }"
+>
+<p>hello</p>
+</p-dialog>

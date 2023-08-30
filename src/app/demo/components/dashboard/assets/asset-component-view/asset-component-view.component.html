@@ -1,0 +1,60 @@
+<div *ngIf="config.data" class="">
+    <div class="grid">
+        <div class="col-12 lg:col-6 xl:col-5">
+            <div class="card shadow-4 mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <p-image
+                        src="https://www.bhphotovideo.com/images/images2500x2500/hp_h2c22aa_abl_hp_x3000_wireless_mouse_1084959.jpg"
+                        alt="Image"
+                        width="250"
+                        [preview]="true"
+                    ></p-image>
+                </div>
+                <span class="text-black-800 font-semibold">
+                    <strong> {{ config.data.component.specification }} </strong>
+                    -
+                    {{ config.data.component.componentType }}
+                </span>
+                <div class="mt-2">
+                    <span>
+                        BARCODEs
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                <!-- {{ asset.assetInventoryDTO.barcode }} -->
+                            </strong>
+                        </p></span
+                    >
+                </div>
+                <div class="mt-2">
+                    <span>
+                        SERIAL NUMBER
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ config.data.component.serialNo }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 lg:col-6 xl:col-3">
+            <div class="mt-5">
+                <span>
+                    ACCOUNTABILITY NUMBER
+                    <p class="text-black-800 font-medium">
+                        <strong>
+                            {{
+                                config.data.component.assetAssignedDTO3
+                                    ?.accountabilityNo
+                            }}
+                        </strong>
+                    </p></span
+                >
+            </div>
+        </div>
+    </div>
+    <p-accordion>
+        <p-accordionTab header="History"> Pas user info </p-accordionTab>
+    </p-accordion>
+</div>
