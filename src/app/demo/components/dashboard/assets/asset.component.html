@@ -10,9 +10,11 @@
         dataKey="id"
         [rows]="5"
         [showCurrentPageReport]="true"
-        [rowsPerPageOptions]="[5, 10, 20]"
+        [rowsPerPageOptions]="[10, 20, 50]"
         [loading]="loading"
         [paginator]="true"
+        [scrollable]="true"
+        scrollHeight="400px"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [globalFilterFields]="[
             'employeeDTO.lastname',
@@ -113,7 +115,7 @@
 
         <ng-template pTemplate="body" let-asset>
             <tr>
-                <td (click)="showDialog(asset)">
+                <td (click)="showDynamicDialog(asset)">
                     <img
                         *ngIf="asset.imagePath; else fallbackImage"
                         [src]="asset.imagePath"
@@ -247,8 +249,8 @@
     header="Edit"
     [(visible)]="edit"
     [breakpoints]="{ '960px': '75vw' }"
-    [style]="{ width: '50vw' }"
-    [draggable]="false"
+    [style]="{ width: '80vw' }"
+    [draggable]="true"
     [resizable]="false"
     [maximizable]="true"
 >
@@ -340,7 +342,9 @@
                                 selectedUser
                                     ? selectedUser.fullName
                                     : asset.employeeDTO?.fullName
-                            }}</strong>
+                            }}
+                            {{asset.employeeDTO?.id}}
+                        </strong>
                         </p>
                         <div></div>
                     </div>
@@ -394,190 +398,9 @@
 
         <p-accordion>
             <p-accordionTab header="Components">
-                <div class="col-12 lg:col-12 xl:col-12">
-                    <div class="flex justify-content-center"></div>
-                </div>
-            </p-accordionTab>
-        </p-accordion>
-        <p-accordion [activeIndex]="0">
-            <p-accordionTab header="History"> Past user info </p-accordionTab>
-        </p-accordion>
-    </div>
-</p-dialog>
-
-<p-dialog
-    header="View"
-    [(visible)]="visible"
-    [modal]="true"
-    [style]="{ width: '50vw' }"
-    [draggable]="false"
-    [resizable]="false"
->
-    <div *ngIf="asset" class="">
-        <div class="grid">
-            <div class="col-12 lg:col-6 xl:col-5">
-                <div class="card shadow-4 mb-0">
-                    <div class="flex justify-content-between mb-3">
-                        <p-image
-                            src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
-                            alt="Image"
-                            width="250"
-                            [preview]="true"
-                        ></p-image>
-                    </div>
-                    <span class="text-black-800 font-semibold">
-                        <strong> {{ asset.assetInventoryDTO.specs }} </strong> -
-                        {{ asset.assetInventoryDTO.unit }}
-                    </span>
-                    <div class="mt-2">
-                        <span>
-                            BARCODE
-                            <p class="text-black-800 font-semibold">
-                                <strong>
-                                    {{ asset.assetInventoryDTO.barcode }}
-                                </strong>
-                            </p></span
-                        >
-                    </div>
-                    <div class="mt-2">
-                        <span>
-                            SERIAL NUMBER
-                            <p class="text-black-800 font-semibold">
-                                <strong>
-                                    {{ asset.assetInventoryDTO.serialNo }}
-                                </strong>
-                            </p></span
-                        >
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 lg:col-6 xl:col-3">
-                <div class="mt-5">
-                    <span>
-                        CURRENT USER
-                        <p class="text-black-500 font-semibold text-xl">
-                            <strong>
-                                {{
-                                    asset.isAvailable === false
-                                        ? asset.employeeDTO?.fullName
-                                        : "No User"
-                                }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        ACCOUNTABILITY NUMBER
-                        <p class="text-black-800 font-medium">
-                            <strong>
-                                {{ asset.accountabilityNo }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        COMPANY
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.company }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-2">
-                    <span>
-                        DEPARTMENT
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.department }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        REMARKS
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.remarks }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-            </div>
-            <div class="col-12 lg:col-6 xl:col-4">
-                <div class="mt-5">
-                    <span>
-                        VENDOR
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.assetInventoryDTO.vendor }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        WARRANTY
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.assetInventoryDTO.warranty }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        DATE PO
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{ asset.assetInventoryDTO.datePO | date }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-
-                <div class="mt-5">
-                    <span>
-                        DATE ACQUIRED
-                        <p class="text-black-800 font-semibold">
-                            <strong>
-                                {{
-                                    asset.assetInventoryDTO.dateAcquired ===
-                                    null
-                                        ? "Empty Field"
-                                        : asset.assetInventoryDTO.dateAcquired
-                                }}
-                            </strong>
-                        </p></span
-                    >
-                </div>
-                <div class="mt-5">
-                    <a [href]="qrCodeImage" download="qr-code.png">
-                        <img
-                            [src]="qrCodeImage"
-                            alt="QR CODE"
-                            width="120"
-                            height="120"
-                        />
-                    </a>
-                </div>
-            </div>
-        </div>
-        <p-accordion>
-            <p-accordionTab header="Components">
                 <div class="grid">
                     <div class="col-12 lg:col-6 xl:col-3" *ngFor="let com of component">
-                        <div class="card mb-0">
+                        <div class="card mb-0" (click)="showComponent(com)">
                             <div class="flex justify-content-between mb-3">
                                 <div>
                                     <span class="block text-500 font-medium mb-3">{{com.serialNo}}</span>
@@ -589,14 +412,11 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="col-12 md:col-6 lg:col-3" *ngFor="let com of component" >
-                        <div class="text-center p-3 border-round-sm bg-primary font-bold">{{com.componentType}}</div>
-                    </div> -->
                 </div>
             </p-accordionTab>
         </p-accordion>
-        <p-accordion>
-            <p-accordionTab header="History"> Pas user info </p-accordionTab>
+        <p-accordion [activeIndex]="0">
+            <p-accordionTab header="History"> Past user info </p-accordionTab>
         </p-accordion>
     </div>
 </p-dialog>

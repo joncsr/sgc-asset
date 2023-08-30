@@ -75,11 +75,15 @@ export class ComponentStorageComponent implements OnInit {
             } else {
                 this.components = data;
             }
+            // Count the number of component items
+            const componentCount = this.components.length;
+            console.log('Total Component Count:', componentCount);
             this.loading = false;
         });
     }
 
     component: any;
+
     showComponent(component: Com) {
         this.ref = this.dialogService.open(ComponentViewComponent, {
             data: {
@@ -101,6 +105,7 @@ export class ComponentStorageComponent implements OnInit {
             (componentTypes: string[]) => {
                 this.componentTypes = componentTypes;
                 this.items = this.componentTypes.map((componentType) => ({
+
                     label: componentType,
                     icon: 'pi pi-fw pi-check-circle',
                     command: () => this.onTabMenuItemSelect(componentType), // Pass componentType to the method

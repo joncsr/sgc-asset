@@ -19,7 +19,15 @@ import { AuthGuard } from './guard/auth.guard';
                                     './demo/components/dashboard/dashboard.module'
                                 ).then((m) => m.DashboardModule),
                         },
-                    ], canActivate: [AuthGuard]
+                        {
+                            path: 'admin',
+                            loadChildren: () =>
+                                import(
+                                    './demo/components/admin/admin.module'
+                                ).then((m) => m.AdminModule),
+                        },
+                    ],
+                    canActivate: [AuthGuard],
                 },
 
                 {
