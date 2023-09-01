@@ -1,8 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { DynamicDialogRef, DynamicDialogConfig, DialogService } from "primeng/dynamicdialog";
 import { Component as Com } from 'src/app/models/component.model';
-import { AssetComponentService } from "src/app/services/asset-component.service";
+
 import { AssetComponentViewComponent } from "../asset-component-view/asset-component-view.component";
+import { AssetComponentService } from "src/app/services/it-asset/asset-component.service";
 
 @Component({
     templateUrl: './view-asset.component.html',

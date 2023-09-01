@@ -1,11 +1,15 @@
-import { Component } from "@angular/core";
-import { SelectItem } from "primeng/api";
-import { Subscription } from "rxjs";
-import { Product } from "src/app/demo/api/product";
-import { ProductService } from "src/app/demo/service/product.service";
-import { LayoutService } from "src/app/layout/service/app.layout.service";
-import { UnitType } from "src/app/models/dropdowns.model";
-import { DropdownService } from "src/app/services/dropdowns.service";
+import { Component } from '@angular/core';
+import { MessageService, SelectItem } from 'primeng/api';
+import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
+import { Subscription } from 'rxjs';
+import { Product } from 'src/app/demo/api/product';
+import { ProductService } from 'src/app/demo/service/product.service';
+import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import { UnitType } from 'src/app/models/dropdowns.model';
+import { AssetInventoryDTO } from 'src/app/models/uploading.model';
+import { AssetService } from 'src/app/services/it-asset/asset.service';
+import { DropdownService } from 'src/app/services/dropdowns.service';
+import { AssetAddCategoryComponent } from './add-asset-category/add-asset-post-category.component';
 
 @Component({
     templateUrl: './add-asset-category.component.html',
@@ -29,36 +33,34 @@ export class AssetCategoryComponent {
     subscription: Subscription;
     pieOptions: any;
 
-    constructor(private productService: ProductService,
+    ref: DynamicDialogRef;
+
+    constructor(
+        private productService: ProductService,
         public layoutService: LayoutService,
-        private dataService: DropdownService
-        ) {
-            this.subscription = this.layoutService.configUpdate$.subscribe(config => {
+        private dataService: DropdownService,
+        private assetService: AssetService,
+        public dialogService: DialogService,
+        public messageService: MessageService
+    ) {
+        this.subscription = this.layoutService.configUpdate$.subscribe(
+            (config) => {
                 this.initCharts();
-            });
-         }
+            }
+        );
+    }
 
     ngOnInit() {
-        this.productService.getProducts().then(data => this.products = data);
-
-        this.sourceCities = [
-            { name: 'San Francisco', code: 'SF' },
-            { name: 'London', code: 'LDN' },
-            { name: 'Paris', code: 'PRS' },
-            { name: 'Istanbul', code: 'IST' },
-            { name: 'Berlin', code: 'BRL' },
-            { name: 'Barcelona', code: 'BRC' },
-            { name: 'Rome', code: 'RM' }];
-
         this.targetCities = [];
 
         this.dataService.getOrderAssetTypes().subscribe(
             (units: UnitType[]) => {
                 this.orderAssetType = units;
 
-                const unitNames = this.orderAssetType.map(unit => unit.unitName);
-                this.getPieData(unitNames)
-
+                const unitNames = this.orderAssetType.map(
+                    (unit) => unit.unitName
+                );
+                this.getPieData(unitNames);
             },
             (error) => {
                 console.error('Error fetching order asset types:', error);
@@ -67,10 +69,9 @@ export class AssetCategoryComponent {
 
         this.sortOptions = [
             { label: 'Price High to Low', value: '!price' },
-            { label: 'Price Low to High', value: 'price' }
+            { label: 'Price Low to High', value: 'price' },
         ];
-
-
+        this.getAssetCount()
     }
 
     onSortChange(event: any) {
@@ -92,26 +93,27 @@ export class AssetCategoryComponent {
     addAsset: boolean = false;
 
     initCharts() {
-
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
-        const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-        const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+        const textColorSecondary = documentStyle.getPropertyValue(
+            '--text-color-secondary'
+        );
+        const surfaceBorder =
+            documentStyle.getPropertyValue('--surface-border');
 
         this.pieOptions = {
             plugins: {
                 legend: {
                     labels: {
                         usePointStyle: true,
-                        color: textColor
-                    }
-                }
-            }
+                        color: textColor,
+                    },
+                },
+            },
         };
-
     }
 
-    getPieData(unitTypeName: any){
+    getPieData(unitTypeName: any) {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
 
@@ -120,32 +122,60 @@ export class AssetCategoryComponent {
                 legend: {
                     labels: {
                         usePointStyle: true,
-                        color: textColor
-                    }
-                }
-            }
+                        color: textColor,
+                    },
+                },
+            },
         };
 
         this.pieData = {
             labels: unitTypeName,
             datasets: [
                 {
-                    data: [540, 325, 702],
+                    data: [213,33,234],
                     backgroundColor: [
                         documentStyle.getPropertyValue('--indigo-500'),
                         documentStyle.getPropertyValue('--purple-500'),
-                        documentStyle.getPropertyValue('--teal-500')
+                        documentStyle.getPropertyValue('--teal-500'),
                     ],
                     hoverBackgroundColor: [
                         documentStyle.getPropertyValue('--indigo-400'),
                         documentStyle.getPropertyValue('--purple-400'),
-                        documentStyle.getPropertyValue('--teal-400')
-                    ]
-                }]
+                        documentStyle.getPropertyValue('--teal-400'),
+                    ],
+                },
+            ],
         };
     }
 
+    assetCount: number;
+
+    getAssetCount() {
+        this.assetService.getAssetUnitTypesCount().subscribe(
+            (count) => {
+                console.log('Received count:', count);
+                this.assetCount = count;
+                console.log('Updated assetCount:', this.assetCount);
+            },
+            (error) => {
+                console.error('Error fetching asset count:', error);
+            }
+        );
+    }
 
 
+    openAddAssetCategory() {
+        this.ref = this.dialogService.open(AssetAddCategoryComponent,
+            {
+                header: 'Add Asset Type',
+                width: '20%',
+                contentStyle: { overflow: 'auto' },
+                baseZIndex: 10000,
+                maximizable: false,
+            });
+    }
+
+    onClick(type: any){
+        console.log(type)
+    }
 }
-

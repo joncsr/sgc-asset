@@ -53,6 +53,7 @@ import { AssetCategoryComponent } from './asset-category/add-asset-category.comp
 import { ComponentCategoryComponent } from './component-category/add-component-category.component';
 import { OrderListModule } from 'primeng/orderlist';
 import { PickListModule } from 'primeng/picklist';
+import { AssetAddCategoryComponent } from './asset-category/add-asset-category/add-asset-post-category.component';
 
 @NgModule({
     imports: [
@@ -138,7 +139,8 @@ import { PickListModule } from 'primeng/picklist';
     declarations: [
         AdminComponent,
         AssetCategoryComponent,
-        ComponentCategoryComponent
+        ComponentCategoryComponent,
+        AssetAddCategoryComponent
 
     ],
 

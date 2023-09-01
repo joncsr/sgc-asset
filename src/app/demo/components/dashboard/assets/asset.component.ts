@@ -11,15 +11,16 @@ import {
     AssetAssignedDTO,
     AssetAssignedDTOView,
 } from 'src/app/models/uploading.model';
-import { AssetService } from 'src/app/services/asset.service';
+import { AssetService } from 'src/app/services/it-asset/asset.service';
 import { DropdownService } from 'src/app/services/dropdowns.service';
 import QRCode from 'qrcode';
-import { AssetComponentService } from 'src/app/services/asset-component.service';
+
 import { Component as Com } from 'src/app/models/component.model';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AssetComponentViewComponent } from './asset-component-view/asset-component-view.component';
 import { AssetViewComponent } from './view-asset/view-asset.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
+import { AssetComponentService } from 'src/app/services/it-asset/asset-component.service';
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;

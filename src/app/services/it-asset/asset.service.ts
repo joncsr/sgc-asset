@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 
-import { AssetAssignedDTO, AssetInventoryDTO } from '../models/uploading.model';
+import { AssetAssignedDTO, AssetInventoryDTO } from '../../models/uploading.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import {
     Department,
     Employee,
     EmployeeAccount,
-} from '../models/employee.model';
+} from '../../models/employee.model';
 import { catchError, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ComponentType } from '../models/dropdowns.model';
-import { ConponentPost } from '../models/component.model';
+import { ComponentType } from '../../models/dropdowns.model';
+import { ConponentPost } from '../../models/component.model';
 
 @Injectable({
     providedIn: 'root',
@@ -33,7 +33,6 @@ export class AssetService {
             formData,
             options
         );
-
     }
     addAsset(data: AssetAssignedDTO): Observable<AssetAssignedDTO[]> {
         return this._http.post<AssetAssignedDTO[]>('/api/AssetAssigned', data);
@@ -70,12 +69,14 @@ export class AssetService {
             );
     }
 
-    getComponentTypes(): Observable<string[]>{
+    getComponentTypes(): Observable<string[]> {
         return this._http
             .get<ComponentType[]>('api/api/ComponentTypes')
             .pipe(
                 map((componentType: ComponentType[]) =>
-                componentType.map((componentType) => componentType.componentType)
+                    componentType.map(
+                        (componentType) => componentType.componentType
+                    )
                 )
             );
     }
@@ -107,22 +108,31 @@ export class AssetService {
         return this._http.get<EmployeeAccount[]>('/api/EmployeeAccount');
     }
 
-    updateAsset(id: number, data: any ):  Observable<AssetAssignedDTO[]>{
+    updateAsset(id: number, data: any): Observable<AssetAssignedDTO[]> {
         return this._http.put<any>(`/api/AssetAssigned/${id}`, data);
     }
 
     updateAssetImage(assetId: number, formData: FormData) {
         const options = {
             headers: new HttpHeaders({
-                'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryXYZ'
-            })
+                'Content-Type':
+                    'multipart/form-data; boundary=----WebKitFormBoundaryXYZ',
+            }),
         };
-        return this._http.post<any>(`/api/AssetAssigned/${assetId}/upload-image`, formData, options);
+        return this._http.post<any>(
+            `/api/AssetAssigned/${assetId}/upload-image`,
+            formData,
+            options
+        );
     }
 
-    addAssetComponent(data: ConponentPost): Observable<ConponentPost[]>{
+    addAssetComponent(data: ConponentPost): Observable<ConponentPost[]> {
         return this._http.post<ConponentPost[]>('/api/AssetComponent', data);
     }
 
-
+    getAssetUnitTypesCount(): Observable<number> {
+        return this._http.get<AssetInventoryDTO[]>('/api/api/AssetAssignedTABLE').pipe(
+          map(assetInventoryDTOs => assetInventoryDTOs.length)
+        );
+      }
 }

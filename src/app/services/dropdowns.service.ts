@@ -52,5 +52,8 @@ export class DropdownService {
             );
     }
 
+    postUnitTypes(data: any): Observable<UnitType[]>{
+        return this._http.post<UnitType[]>('/api/UnitTypes', data)
+    }
 
 }

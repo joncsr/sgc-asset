@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { AssetService } from 'src/app/services/asset.service';
+import { AssetService } from 'src/app/services/it-asset/asset.service';
 import { AssetListComponent } from '../asset-list/asset-list.component';
 import { MessageService } from 'primeng/api';
 
@@ -107,12 +107,10 @@ export class AddComponentComponent implements OnInit {
                         summary: 'Asset Selected',
                         detail: 'Added Success',
                     });
-                    // this.componentForm.reset();
-                    // setTimeout(() => {
-                    //     window.location.reload();
-                    //   }, 2000);
-
-                    alert(response);
+                    this.componentForm.reset();
+                    setTimeout(() => {
+                        window.location.reload();
+                      }, 1000);
                 });
         }
     }

@@ -6,7 +6,7 @@ import {
     AssetAssignedDTO,
     AssetAssignedDTOView,
 } from 'src/app/models/uploading.model';
-import { AssetService } from 'src/app/services/asset.service';
+import { AssetService } from 'src/app/services/it-asset/asset.service';
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;

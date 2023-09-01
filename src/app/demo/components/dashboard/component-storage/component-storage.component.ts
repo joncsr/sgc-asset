@@ -3,13 +3,14 @@ import { MenuItem } from 'primeng/api/menuitem';
 import { Table } from 'primeng/table';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CustomerService } from 'src/app/demo/service/customer.service';
-import { AssetComponentService } from 'src/app/services/asset-component.service';
+
 import { Component as Com } from 'src/app/models/component.model';
 import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ComponentViewComponent } from './component-view/component-view.component';
 import { DropdownService } from 'src/app/services/dropdowns.service';
 import { ComponentEditComponent } from './component-edit/component-edit.component';
+import { AssetComponentService } from 'src/app/services/it-asset/asset-component.service';
 
 @Component({
     templateUrl: './component-storage.component.html',
@@ -136,7 +137,7 @@ export class ComponentStorageComponent implements OnInit {
             maximizable: true,
         });
         this.ref.onClose.subscribe((data: Com) => {
-            console.log('Dialog closed with data:', data.barcode);
+            console.log('Dialog closed with data:');
         });
     }
 }

@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ComponentType } from '@fullcalendar/core/preact';
-import { Component } from '../models/component.model';
+import { Component } from 'src/app/models/component.model';
+
 
 
 @Injectable({

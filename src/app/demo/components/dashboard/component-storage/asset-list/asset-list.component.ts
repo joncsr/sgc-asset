@@ -4,7 +4,7 @@ import { SelectItem } from 'primeng/api';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
 import { AssetAssignedDTO } from 'src/app/models/uploading.model';
-import { AssetService } from 'src/app/services/asset.service';
+import { AssetService } from 'src/app/services/it-asset/asset.service';
 
 @Component({
     templateUrl: './asset-list.component.html',
