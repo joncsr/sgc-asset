@@ -21,6 +21,7 @@ import { AssetComponentViewComponent } from './asset-component-view/asset-compon
 import { AssetViewComponent } from './view-asset/view-asset.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
 import { AssetComponentService } from 'src/app/services/it-asset/asset-component.service';
+import { AssignComponent } from './assign/assign.component';
 
 interface AutoCompleteCompleteEvent {
     originalEvent: Event;
@@ -309,8 +310,7 @@ export class AssetComponent implements OnInit {
         this.getAssetComponent(this.employeeId);
     }
 
-    editAssetDynamicDialog(asset: AssetAssignedDTO){
-
+    editAssetDynamicDialog(asset: AssetAssignedDTO) {
         this.ref = this.dialogService.open(EditAssetComponent, {
             data: {
                 asset,
@@ -321,38 +321,8 @@ export class AssetComponent implements OnInit {
             baseZIndex: 10000,
             maximizable: true,
         });
-        console.log(asset)
+        console.log(asset);
     }
-
-
-    // showDialog(viewAsset: AssetAssignedDTO) {
-    //     this.asset = viewAsset;
-    //     this.visible = true;
-
-    //     const qrCodeData = `
-    //     USER: ${
-    //         this.asset.isAvailable === false
-    //             ? this.asset.employeeDTO?.fullName
-    //             : 'No User'
-    //     }
-    //     COMPANY: ${this.asset.company}
-    //     DEPARTMENT: ${this.asset.department}
-    //     BARCODE: ${this.asset.assetInventoryDTO.barcode}
-    //     ACCOUNTABILITY: ${this.asset.accountabilityNo}
-    //   `;
-    //     QRCode.toDataURL(qrCodeData)
-    //         .then((url) => {
-    //             this.qrCodeImage = url;
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error generating QR code:', error);
-    //         });
-
-    //     this.asset.id = viewAsset.id;
-    //     console.log(this.asset.id);
-
-    //     this.getAssetComponent(this.asset.id);
-    // }
 
     showDynamicDialog(asset: AssetAssignedDTO) {
         this.asset = asset;
@@ -389,7 +359,6 @@ export class AssetComponent implements OnInit {
             baseZIndex: 10000,
             maximizable: true,
         });
-
     }
 
     filter(filterValue: string[]) {
@@ -579,4 +548,19 @@ export class AssetComponent implements OnInit {
         });
         console.log(component);
     }
+
+    assignNewUser(asset: any){
+        this.ref = this.dialogService.open(AssignComponent, {
+            data: {
+                asset
+            },
+            header: 'Assign New User',
+            width: '50%',
+            contentStyle: { overflow: 'auto' },
+            baseZIndex: 10000,
+            maximizable: true,
+        })
+    }
+
+
 }

@@ -22,6 +22,7 @@ export class AssetViewComponent implements OnInit {
     ngOnInit(): void {
         this.getAssetComponent(this.config.data.asset.id)
         console.log(this.config)
+        console.log(this.config.data.asset.assethistoryDTO.previuosUserId)
     }
 
     component: Com[] = [];

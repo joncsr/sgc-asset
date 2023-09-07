@@ -12,6 +12,7 @@ import { catchError, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ComponentType } from '../../models/dropdowns.model';
 import { ConponentPost } from '../../models/component.model';
+import { AssetHistory } from 'src/app/models/asset-history.model';
 
 @Injectable({
     providedIn: 'root',
@@ -135,4 +136,8 @@ export class AssetService {
           map(assetInventoryDTOs => assetInventoryDTOs.length)
         );
       }
+
+    postAssetHistory(assetId: number, data: any): Observable<any>{
+        return this._http.post<any>(`api/AssetHistory/${assetId}`, data);
+    }
 }

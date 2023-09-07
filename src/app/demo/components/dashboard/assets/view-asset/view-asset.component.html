@@ -178,6 +178,19 @@
             </p-accordionTab>
         </p-accordion>
         <p-accordion>
-            <p-accordionTab header="History"> Pas user info </p-accordionTab>
+            <p-accordionTab header="History">
+                <div class="flex justify-content-between">
+                    <p> Current:   {{
+                        config.data.asset.isAvailable === false
+                            ? config.data.asset.employeeDTO?.fullName
+                            : "No User"
+                    }}</p>
+                    <p>Date: Date Transfered</p>
+                </div>
+
+                <div *ngFor="let history of config.data.asset.assethistoryDTO" class="flex justify-content-between">
+                   <p>Previous: {{history.employeeDTO?.fullName}}</p> <p>Date: {{history.dateIssued | date}}</p>
+                </div>
+            </p-accordionTab>
         </p-accordion>
     </div>

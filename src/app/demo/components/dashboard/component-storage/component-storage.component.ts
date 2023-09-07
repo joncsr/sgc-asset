@@ -137,7 +137,7 @@ export class ComponentStorageComponent implements OnInit {
             maximizable: true,
         });
         this.ref.onClose.subscribe((data: Com) => {
-            console.log('Dialog closed with data:');
+            console.log('Dialog closed with data:', data.assignedID);
         });
     }
 }

@@ -62,6 +62,7 @@ import { ComponentViewComponent } from './component-storage/component-view/compo
 import { ComponentEditComponent } from './component-storage/component-edit/component-edit.component';
 import { AssetComponentViewComponent } from './assets/asset-component-view/asset-component-view.component';
 import { AssetViewComponent } from './assets/view-asset/view-asset.component';
+import { AssignComponent } from './assets/assign/assign.component';
 
 @NgModule({
     imports: [
@@ -157,7 +158,8 @@ import { AssetViewComponent } from './assets/view-asset/view-asset.component';
         ComponentViewComponent,
         ComponentEditComponent,
         AssetComponentViewComponent,
-        AssetViewComponent
+        AssetViewComponent,
+        AssignComponent
     ],
 
     providers: [MessageService, DialogService],

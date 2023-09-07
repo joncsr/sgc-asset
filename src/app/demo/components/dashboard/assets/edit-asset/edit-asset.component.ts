@@ -40,7 +40,6 @@ export class EditAssetComponent implements OnInit {
     }
     ngOnInit(): void {}
 
-
     asset: AssetAssignedDTO
     updateAssetSubmit() {
         if (this.updateAssetForm.valid) {
