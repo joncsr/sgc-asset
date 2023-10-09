@@ -10,6 +10,7 @@ export interface AssetAssignedDTO {
     lastModified: string;
     employeeDTO?: EmployeeDTO;
     isAvailable: boolean;
+    assethistoryDTO:   AssethistoryDTO[];
     imageFile: string;
     imagePath : string;
 }
@@ -47,6 +48,14 @@ export interface EmployeeDTO {
     fullName?: string;
 }
 
+export interface AssethistoryDTO {
+    id:              number;
+    previuosUserId:  number;
+    employeeDTO:     EmployeeDTO;
+    assetAssignedId: number;
+    dateIssued:      string;
+}
+
 export class AssetAssignedDTOView {
     id: number;
     assetInventoryId: number;
@@ -69,4 +78,3 @@ export class AssetAssignedDTOView {
         asset = asset || {};
     }
 }
-

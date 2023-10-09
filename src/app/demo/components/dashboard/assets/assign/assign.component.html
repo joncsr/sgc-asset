@@ -1,0 +1,33 @@
+<div class="grid">
+    <div class="col-12 lg:col-12">
+        <form [formGroup]="postAssetHistoryForm" (ngSubmit)="changeAssetUserSubmit()">
+            <div class="p-formgrid grid">
+                <div class="col-12 mb-1 lg:col-12 lg:mb-0 mt-5">
+                    <span class="p-float-label">
+                        <p-autoComplete
+                            [dropdown]="true"
+                            [suggestions]="filteredUsers"
+                            (completeMethod)="filterUsers($event)"
+                            field="fullName"
+                            formControlName="currentUser"
+                            (onSelect)="onUserSelect($event)"
+                            [ngStyle]="{ width: '100%' }"
+                        ></p-autoComplete>
+                        <label htmlFor="unitName">Employee</label>
+                    </span>
+                </div>
+            </div>
+            <div class="grid formgrid">
+                <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                    <button
+                        pButton
+                        type="submit"
+                        [ngStyle]="{ width: '100%' }"
+                        [disabled]="!postAssetHistoryForm.valid"
+                        label="Submit"
+                    ></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

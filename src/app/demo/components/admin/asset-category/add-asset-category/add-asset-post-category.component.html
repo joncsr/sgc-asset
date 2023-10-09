@@ -1,0 +1,40 @@
+
+<div class="grid">
+    <div class="col-12 lg:col-12">
+        <form [formGroup]="addAssetCategoryForm" (ngSubmit)="onFormSubmit()">
+            <div class="p-formgrid grid">
+                <div class="col-12 mb-1 lg:col-12 lg:mb-0 mt-5">
+                    <span class="p-float-label">
+                        <input
+                            type="text"
+                            pInputText
+                            name="unitName"
+                            id="unitName"
+                            formControlName="unitName"
+                            [ngStyle]="{ width: '100%' }"
+                            [ngClass]="{
+                                'ng-invalid':
+                                    !addAssetCategoryForm.get('unitName')
+                                        .valid &&
+                                    addAssetCategoryForm.get('unitName').dirty
+                            }"
+                        />
+                        <label htmlFor="unitName">Unit Type</label>
+                    </span>
+                </div>
+            </div>
+            <div class="grid formgrid">
+                <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                    <button
+                        pButton
+                        type="submit"
+                        [ngStyle]="{ width: '100%' }"
+                        [disabled]="!addAssetCategoryForm"
+                        label="Submit"
+                    ></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

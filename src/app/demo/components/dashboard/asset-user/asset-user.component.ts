@@ -4,7 +4,7 @@ import { Table } from 'primeng/table';
 import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CustomerService } from 'src/app/demo/service/customer.service';
 import { Employee, EmployeeAccount } from 'src/app/models/employee.model';
-import { AssetService } from 'src/app/services/asset.service';
+import { AssetService } from 'src/app/services/it-asset/asset.service';
 import * as diacritics from 'diacritics';
 
 

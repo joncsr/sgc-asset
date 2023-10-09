@@ -7,7 +7,7 @@ import { Customer, Representative } from 'src/app/demo/api/customer';
 import { CountryService } from 'src/app/demo/service/country.service';
 import { CustomerService } from 'src/app/demo/service/customer.service';
 import { Department, Employee } from 'src/app/models/employee.model';
-import { AssetService } from 'src/app/services/asset.service';
+import { AssetService } from 'src/app/services/it-asset/asset.service';
 import { FormControl } from '@angular/forms';
 import { DropdownService } from 'src/app/services/dropdowns.service';
 

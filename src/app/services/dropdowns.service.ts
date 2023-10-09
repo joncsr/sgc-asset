@@ -40,6 +40,10 @@ export class DropdownService {
             );
     }
 
+    getOrderAssetTypes(): Observable<UnitType[]> {
+        return this._http.get<UnitType[]>('/api/UnitTypes');
+    }
+
     getComponentTypes(): Observable<string[]> {
         return this._http
             .get<ComponentType[]>('/api/api/ComponentTypes')
@@ -47,4 +51,9 @@ export class DropdownService {
                 map((units: ComponentType[]) => units.map((unit) => unit.componentType))
             );
     }
+
+    postUnitTypes(data: any): Observable<UnitType[]>{
+        return this._http.post<UnitType[]>('/api/UnitTypes', data)
+    }
+
 }

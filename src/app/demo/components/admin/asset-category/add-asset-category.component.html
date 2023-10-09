@@ -1,0 +1,39 @@
+<p-toast></p-toast>
+<div class="grid">
+    <div class="col-12 xl:col-6">
+
+            <h5>Asset Category List</h5>
+            <div>
+                <button
+                    (click)="openAddAssetCategory()"
+                    pButton
+                    icon="pi pi-plus"
+                ></button>
+            </div>
+            <p-orderList
+                responsive="true"
+                [value]="orderAssetType"
+                header="Unit Types"
+                [dragdrop]="true"
+                [listStyle]="{ height: '250px' }"
+            >
+                <ng-template let-type pTemplate="item">
+                    <div (click)="onClick(type)">
+                        <div>{{ type.unitName }}</div>
+                    </div>
+                </ng-template>
+            </p-orderList>
+
+    </div>
+    <div class="col-12 xl:col-6">
+        <div class="card flex flex-column align-items-center">
+            <h5 class="text-left w-full">Type Chart</h5>
+            <p-chart
+                type="pie"
+                [data]="pieData"
+                [options]="pieOptions"
+            ></p-chart>
+            {{assetCount}}
+        </div>
+    </div>
+</div>

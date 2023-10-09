@@ -8,7 +8,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     uploadedFiles: any[] = [];
 
     tieredItems: MenuItem[] = [];
-
     routeItems: MenuItem[] = [];
 
     constructor() {}
@@ -27,5 +26,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ngOnDestroy() {}
 
     onBasicUpload() {}
+
     onUpload(event: any) {}
 }

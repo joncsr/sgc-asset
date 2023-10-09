@@ -1,0 +1,196 @@
+    <div *ngIf="config.data" class="">
+        <div class="grid">
+            <div class="col-12 lg:col-6 xl:col-5">
+                <div class="card shadow-4 mb-0">
+                    <div class="flex justify-content-between mb-3">
+                        <p-image
+                            src="https://i5.walmartimages.com/asr/d76bd9ab-6cf5-48ab-9dc8-57a14c94a0ce.8f6d99aba9aa08a769db9efdcc51d663.jpeg"
+                            alt="Image"
+                            width="250"
+                            [preview]="true"
+                        ></p-image>
+                    </div>
+                    <span class="text-black-800 font-semibold">
+                        <strong> {{ config.data.asset.assetInventoryDTO.specs }} </strong> -
+                        {{ config.data.asset.assetInventoryDTO.unit }}
+                    </span>
+                    <div class="mt-2">
+                        <span>
+                            BARCODE
+                            <p class="text-black-800 font-semibold">
+                                <strong>
+                                    {{ config.data.asset.assetInventoryDTO.barcode }}
+                                </strong>
+                            </p></span
+                        >
+                    </div>
+                    <div class="mt-2">
+                        <span>
+                            SERIAL NUMBER
+                            <p class="text-black-800 font-semibold">
+                                <strong>
+                                    {{ config.data.asset.assetInventoryDTO.serialNo }}
+                                </strong>
+                            </p></span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 lg:col-6 xl:col-3">
+                <div class="mt-5">
+                    <span>
+                        CURRENT USER
+                        <p class="text-black-500 font-semibold text-xl">
+                            <strong>
+                                {{
+                                    config.data.asset.isAvailable === false
+                                        ? config.data.asset.employeeDTO?.fullName
+                                        : "No User"
+                                }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        ACCOUNTABILITY NUMBER
+                        <p class="text-black-800 font-medium">
+                            <strong>
+                                {{ config.data.asset.accountabilityNo }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        COMPANY
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ config.data.asset.company }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-2">
+                    <span>
+                        DEPARTMENT
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ config.data.asset.department }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        REMARKS
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ config.data.asset.remarks }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+            </div>
+            <div class="col-12 lg:col-6 xl:col-4">
+                <div class="mt-5">
+                    <span>
+                        VENDOR
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ config.data.asset.assetInventoryDTO.vendor }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        WARRANTY
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ config.data.asset.assetInventoryDTO.warranty }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        DATE PO
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{ config.data.asset.assetInventoryDTO.datePO | date }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+
+                <div class="mt-5">
+                    <span>
+                        DATE ACQUIRED
+                        <p class="text-black-800 font-semibold">
+                            <strong>
+                                {{
+                                    config.data.asset.assetInventoryDTO.dateAcquired ===
+                                    null
+                                        ? "Empty Field"
+                                        : config.data.asset.assetInventoryDTO.dateAcquired
+                                }}
+                            </strong>
+                        </p></span
+                    >
+                </div>
+                <div class="mt-5">
+                    <a [href]="QRimage" download="qr-code.png">
+                        <img
+                            [src]="config.data.QRimage"
+                            alt="QR CODE"
+                            width="120"
+                            height="120"
+                        />
+                    </a>
+                </div>
+            </div>
+        </div>
+        <p-accordion>
+            <p-accordionTab header="Components">
+                <div class="grid">
+                    <div class="col-12 lg:col-6 xl:col-3" *ngFor="let com of component">
+                        <div class="card mb-0" (click)="showComponent(com)">
+                            <div class="flex justify-content-between mb-3">
+                                <div>
+                                    <span class="block text-500 font-medium mb-3">{{com.serialNo}}</span>
+                                    <div class="text-900 font-medium text-xl">{{com.componentType}}</div>
+                                </div>
+                                <div class="flex align-items-center justify-content-center bg-blue-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                                    <i class="pi pi-verified text-blue-500 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
+        <p-accordion>
+            <p-accordionTab header="History">
+                <div class="flex justify-content-between">
+                    <p> Current:   {{
+                        config.data.asset.isAvailable === false
+                            ? config.data.asset.employeeDTO?.fullName
+                            : "No User"
+                    }}</p>
+                    <p>Date: Date Transfered</p>
+                </div>
+
+                <div *ngFor="let history of config.data.asset.assethistoryDTO" class="flex justify-content-between">
+                   <p>Previous: {{history.employeeDTO?.fullName}}</p> <p>Date: {{history.dateIssued | date}}</p>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
